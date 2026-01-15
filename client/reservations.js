@@ -7,7 +7,8 @@ let selectedCheckIn = null;
 let selectedCheckOut = null;
 let currentMonth = new Date();
 
-// Reservas existentes (simuladas)
+// Reservas existentes (simuladas + Firestore)
+let dbReservations = []; // Global state for Firestore reservations
 const existingReservations = [
     { checkIn: new Date(2025, 0, 10), checkOut: new Date(2025, 0, 15) },
     { checkIn: new Date(2025, 0, 22), checkOut: new Date(2025, 0, 25) },
@@ -15,7 +16,8 @@ const existingReservations = [
 ];
 
 // Inicializar calendario cuando se carga la página
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    await loadReservationsData(); // Fetch data first
     renderCalendar();
     updatePrice();
 
@@ -36,6 +38,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listener para el formulario
     document.getElementById('reservationForm').addEventListener('submit', handleReservation);
 });
+
+async function loadReservationsData() {
+    try {
+        const snapshot = await getDocs(collection(db, "reservations"));
+        dbReservations = [];
+        snapshot.forEach(doc => {
+            dbReservations.push(doc.data());
+        });
+        console.log("Reservas cargadas:", dbReservations.length);
+        renderCalendar(); // Re-render when data arrives
+    } catch (error) {
+        console.error("Error cargando reservas:", error);
+    }
+}
 
 // Renderizar calendario
 function renderCalendar() {
@@ -114,11 +130,12 @@ function isReserved(date, villaNumber) {
         return matchesVilla && date >= reservation.checkIn && date <= reservation.checkOut;
     });
 
-    // Check localStorage reservations para esta villa
-    const savedReservations = getReservationsFromStorage();
-    const isSavedReserved = savedReservations.some(reservation => {
+    // Check Firestore reservations for this villa
+    // Uses the global dbReservations array which is loaded asynchronously
+    const isSavedReserved = dbReservations.some(reservation => {
         const checkIn = new Date(reservation.checkIn);
         const checkOut = new Date(reservation.checkOut);
+        // Note: Legacy data might have string '1' or number 1, so use ==
         const matchesVilla = reservation.villaNumber == checkVilla;
         return matchesVilla && date >= checkIn && date <= checkOut;
     });
@@ -529,7 +546,7 @@ function selectVilla(villaNumber) {
     }
 
     // IMPORTANTE: Recargar el calendario para mostrar disponibilidad de esta villa
-    renderCalendar();
+    loadReservationsData().then(() => renderCalendar());
 }
 
 // Update villa image
