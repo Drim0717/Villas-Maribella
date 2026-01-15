@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villas Maribella - Portal de Acceso</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #0077B6;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 2.5rem;
+        }
+
+        .cards {
+            display: flex;
+            gap: 1.5rem;
+            flex-direction: column;
+        }
+
+        .card {
+            display: block;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: #333;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #00B4D8;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.2);
+        }
+
+        .card h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            color: #2B2D42;
+        }
+
+        .card span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="images/Logo.png" alt="Villas Maribella Logo" style="max-width: 150px; margin-bottom: 1rem;">
+        <p>Selecciona una opción para continuar</p>
+
+        <div class="cards">
+            <a href="client/index.html" class="card">
+                <span>🏖️</span>
+                <h2>Ir al Sitio Web</h2>
+                <div style="font-size: 0.9rem; color: #666;">Ver villas, galería y reservas</div>
+            </a>
+
+            <a href="admin/admin.html" class="card">
+                <span>🔐</span>
+                <h2>Panel de Administración</h2>
+                <div style="font-size: 0.9rem; color: #666;">Gestionar reservas y configuración</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Villas Maribella Project
+        </div>
+    </div>
+</body>
+
+</html>
