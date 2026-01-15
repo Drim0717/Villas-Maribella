@@ -17,7 +17,7 @@ const existingReservations = [
 
 // Inicializar calendario cuando se carga la página
 document.addEventListener('DOMContentLoaded', async function () {
-    await loadReservationsData(); // Fetch data first
+    await loadReservationsData();
     renderCalendar();
     updatePrice();
 
@@ -123,30 +123,35 @@ function renderCalendar() {
 function isReserved(date, villaNumber) {
     // Si no se especifica villa, usar la villa actualmente seleccionada
     const checkVilla = villaNumber || currentVillaNumber;
+    // Format checking date to YYYY-MM-DD to match storage format and avoid timezone issues
+    const dateStr = formatDate(date);
 
-    // Check existing reservations para esta villa
+    // Check existing reservations (simulated)
     const isExistingReserved = existingReservations.some(reservation => {
         const matchesVilla = !reservation.villaNumber || reservation.villaNumber == checkVilla;
-        return matchesVilla && date >= reservation.checkIn && date <= reservation.checkOut;
+        // Convert existing Date objects to strings for consistent comparison
+        const checkInStr = formatDate(reservation.checkIn);
+        const checkOutStr = formatDate(reservation.checkOut);
+        return matchesVilla && dateStr >= checkInStr && dateStr < checkOutStr; // Exclusive checkout
     });
 
     // Check Firestore reservations for this villa
     // Uses the global dbReservations array which is loaded asynchronously
     const isSavedReserved = dbReservations.some(reservation => {
-        const checkIn = new Date(reservation.checkIn);
-        const checkOut = new Date(reservation.checkOut);
+        // reservation.checkIn is already "YYYY-MM-DD" string
         // Note: Legacy data might have string '1' or number 1, so use ==
         const matchesVilla = reservation.villaNumber == checkVilla;
-        return matchesVilla && date >= checkIn && date <= checkOut;
+        // Compare strings: "2026-01-19" (date) >= "2026-01-19" (checkIn) -> True
+        // AND "2026-01-19" (date) < "2026-01-21" (checkOut) -> True
+        return matchesVilla && dateStr >= reservation.checkIn && dateStr < reservation.checkOut;
     });
 
     // Check blocked dates para esta villa (o bloques globales sin villa específica)
     const blockedDates = getBlockedDatesFromStorage();
     const isBlocked = blockedDates.some(block => {
-        const startDate = new Date(block.startDate);
-        const endDate = new Date(block.endDate);
+        // block.startDate might be YYYY-MM-DD string from input type="date"
         const matchesVilla = !block.villaNumber || block.villaNumber == checkVilla;
-        return matchesVilla && date >= startDate && date <= endDate;
+        return matchesVilla && dateStr >= block.startDate && dateStr <= block.endDate; // Blocked is inclusive usually
     });
 
     return isExistingReserved || isSavedReserved || isBlocked;
