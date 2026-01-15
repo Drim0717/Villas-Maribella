@@ -335,12 +335,31 @@ function showTransferDetails() {
 }
 
 // Procesar pago (simulado)
+// Procesar pago (simulado)
 async function executePayment(method) {
+    console.log("Iniciando procesamiento de pago...", method);
+
+    // Validar fechas antes de continuar
+    if (!selectedCheckIn || !selectedCheckOut) {
+        alert("Error de fechas. Por favor recarga la página.");
+        closePaymentModal();
+        return;
+    }
+
     const nights = Math.ceil((selectedCheckOut - selectedCheckIn) / (1000 * 60 * 60 * 24));
     const total = nights * PRICE_PER_NIGHT;
-    const guestName = document.getElementById('guestName').value;
-    const guestEmail = document.getElementById('guestEmail').value;
-    const numGuests = document.getElementById('numGuests').value;
+
+    // Obtener valores con fallbacks seguros para evitar 'undefined' en Firestore
+    const guestNameInput = document.getElementById('guestName');
+    const guestEmailInput = document.getElementById('guestEmail');
+    const numGuestsInput = document.getElementById('numGuests');
+    const villaSelect = document.getElementById('villaSelect');
+
+    const guestName = guestNameInput ? guestNameInput.value : 'Anónimo';
+    const guestEmail = guestEmailInput ? guestEmailInput.value : 'no-email@test.com';
+    const numGuests = numGuestsInput ? (parseInt(numGuestsInput.value) || 1) : 1;
+    const selectedVilla = villaSelect ? villaSelect.value : '1';
+
     const confirmationCode = 'VM-' + Math.floor(Math.random() * 100000);
 
     const modalContent = document.getElementById('modalContent');
@@ -348,27 +367,33 @@ async function executePayment(method) {
         <div class="payment-processing">
             <div class="spinner"></div>
             <h3>Procesando pago...</h3>
-            <p>Por favor espera un momento</p>
+            <p>Conectando con el servidor...</p>
         </div>
     `;
 
-    const villaSelect = document.getElementById('villaSelect');
-    const selectedVilla = villaSelect ? villaSelect.value : '1';
-
     try {
-        await saveReservationToStorage({
+        console.log("Enviando datos a Firestore...");
+
+        // Construir objeto de reserva limpio
+        const reservationData = {
             id: confirmationCode,
             guestName: guestName,
             guestEmail: guestEmail,
             villaNumber: selectedVilla,
             checkIn: formatDate(selectedCheckIn),
             checkOut: formatDate(selectedCheckOut),
-            numGuests: parseInt(numGuests),
+            numGuests: numGuests,
             total: total,
-            status: 'confirmed',
+            status: 'confirmed', // Confirmación automática como solicitaste
             paymentMethod: method,
             createdAt: new Date().toISOString()
-        });
+        };
+
+        console.log("Datos a guardar:", reservationData);
+
+        await saveReservationToStorage(reservationData);
+
+        console.log("Guardado exitoso!");
 
         modalContent.innerHTML = `
             <div class="payment-success">
@@ -376,20 +401,20 @@ async function executePayment(method) {
                 <h2>¡Reserva Confirmada!</h2>
                 <p>Tu reserva ha sido procesada exitosamente.</p>
                 <div class="confirmation-details">
-                    <p><strong>Código de confirmación:</strong> ${confirmationCode}</p>
-                    <p><strong>Total pagado:</strong> $${total.toFixed(2)} USD</p>
-                    <p><strong>Check-in:</strong> ${selectedCheckIn.toLocaleDateString('es-ES')}</p>
-                    <p><strong>Check-out:</strong> ${selectedCheckOut.toLocaleDateString('es-ES')}</p>
+                    <p><strong>Código:</strong> ${confirmationCode}</p>
+                    <p><strong>Método:</strong> ${method === 'transfer' ? 'Transferencia (Auto-confirmada)' : 'Tarjeta/PayPal'}</p>
+                    <p><strong>Total:</strong> $${total.toFixed(2)} USD</p>
                 </div>
                 <p class="email-notice">📧 Hemos enviado un correo de confirmación</p>
                 <button class="confirm-btn" onclick="closePaymentModal(); resetForm();">Aceptar</button>
             </div>
         `;
     } catch (error) {
+        console.error("Error CRÍTICO en executePayment:", error);
         modalContent.innerHTML = `
             <div class="payment-error">
-                <h3>Error</h3>
-                <p>No pudimos procesar tu reserva. Intenta nuevamente.</p>
+                <h3>Error de Conexión</h3>
+                <p>Hubo un problema guardando la reserva: ${error.message}</p>
                 <button class="cancel-btn" onclick="closePaymentModal()">Cerrar</button>
             </div>
         `;
