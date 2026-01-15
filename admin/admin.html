@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Villas Maribella</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h1><img src="../images/Logo.png" alt="Villas Maribella" class="logo-image"></h1>
+            <h2>Panel de Administración</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminPassword">Contraseña:</label>
+                    <input type="password" id="adminPassword" placeholder="Ingresa la contraseña" required>
+                </div>
+                <button type="submit" class="login-btn">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1><img src="../images/Logo.png" alt="Villas Maribella" class="logo-image-admin"> Panel de
+                    Administración
+                </h1>
+                <div class="header-actions">
+                    <button onclick="refreshData()" class="refresh-btn">🔄 Actualizar</button>
+                    <button onclick="logout()" class="logout-btn">Cerrar Sesión</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- STATISTICS -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <h3 id="totalReservations">0</h3>
+                    <p>Total Reservas</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3 id="totalRevenue">$0</h3>
+                    <p>Ingresos Totales</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-content">
+                    <h3 id="occupancyRate">0%</h3>
+                    <p>Ocupación</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🚫</div>
+                <div class="stat-content">
+                    <h3 id="blockedDaysCount">0</h3>
+                    <p>Días Bloqueados</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('reservations')">📋 Reservas</button>
+            <button class="tab-btn" onclick="switchTab('calendar')">📅 Bloquear Fechas</button>
+        </div>
+
+        <!-- RESERVATIONS TAB -->
+        <section id="reservationsTab" class="tab-content active">
+            <div class="section-header">
+                <h2>Lista de Reservas</h2>
+                <div class="filter-controls">
+                    <select id="monthFilter" class="month-filter">
+                        <option value="">Todos los meses</option>
+                        <option value="2025-01">Enero 2025</option>
+                        <option value="2025-02">Febrero 2025</option>
+                        <option value="2025-03">Marzo 2025</option>
+                        <option value="2025-04">Abril 2025</option>
+                        <option value="2025-05">Mayo 2025</option>
+                        <option value="2025-06">Junio 2025</option>
+                        <option value="2025-07">Julio 2025</option>
+                        <option value="2025-08">Agosto 2025</option>
+                        <option value="2025-09">Septiembre 2025</option>
+                        <option value="2025-10">Octubre 2025</option>
+                        <option value="2025-11">Noviembre 2025</option>
+                        <option value="2025-12">Diciembre 2025</option>
+                    </select>
+                    <button onclick="showAddReservation()" class="add-btn">+ Agregar Reserva Manual</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="reservationsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Villa</th>
+                            <th>Huésped</th>
+                            <th>Email</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Noches</th>
+                            <th>Personas</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CALENDAR BLOCKING TAB -->
+        <section id="calendarTab" class="tab-content">
+            <div class="section-header">
+                <h2>Gestión de Disponibilidad</h2>
+            </div>
+            <div class="calendar-blocking">
+                <div class="block-form">
+                    <h3>Bloquear Nuevas Fechas</h3>
+                    <form id="blockDatesForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="blockStartDate">Fecha Inicio:</label>
+                                <input type="date" id="blockStartDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="blockEndDate">Fecha Fin:</label>
+                                <input type="date" id="blockEndDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="blockReason">Motivo:</label>
+                            <input type="text" id="blockReason" placeholder="Ej: Mantenimiento, Evento privado"
+                                required>
+                        </div>
+                        <button type="submit" class="block-btn">Bloquear Fechas</button>
+                    </form>
+                </div>
+                <div class="blocked-dates-list">
+                    <h3>Fechas Bloqueadas Actualmente</h3>
+                    <div id="blockedDatesList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <h3>Editar Reserva</h3>
+                <form id="editForm">
+                    <input type="hidden" id="editReservationId">
+                    <div class="form-group">
+                        <label>Nombre del Huésped:</label>
+                        <input type="text" id="editGuestName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="editGuestEmail" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in:</label>
+                            <input type="date" id="editCheckIn" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out:</label>
+                            <input type="date" id="editCheckOut" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Personas:</label>
+                        <input type="number" id="editNumGuests" min="1" max="8" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="save-btn">Guardar Cambios</button>
+                        <button type="button" onclick="closeEditModal()" class="cancel-btn">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
