@@ -575,3 +575,16 @@ function updateImageIndicator() {
         indicator.textContent = `${currentVillaImageIndex + 1} / ${images.length}`;
     }
 }
+
+// ============================================
+// EXPOSE FUNCTIONS TO WINDOW
+// ============================================
+// Needed because type="module" does not expose functions globally by default,
+// but our HTML uses onclick="..." attributes.
+window.processPayment = processPayment;
+window.executePayment = executePayment;
+window.closePaymentModal = closePaymentModal;
+window.resetForm = resetForm;
+window.navigateImage = navigateImage;
+window.selectVilla = selectVilla;
+window.updateVillaImage = updateVillaImage;

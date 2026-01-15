@@ -344,6 +344,17 @@ function saveBlockedDates(blockedDates) {
 }
 
 // ============================================
+// EXPOSE FUNCTIONS TO WINDOW
+// ============================================
+window.logout = logout;
+window.showAddReservation = showAddReservation;
+window.switchTab = switchTab;
+window.closeEditModal = closeEditModal;
+// Note: deleteReservation, unblockDates are handled via event delegation in DOMContentLoaded, 
+// so strictly speaking they don't need to be global if not called by onclick="...".
+// admin.html check: <button onclick="logout()">, <button onclick="switchTab(...)"> needed.
+
+// ============================================
 // TAB SWITCHING
 // ============================================
 function switchTab(tabName) {
