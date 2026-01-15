@@ -313,7 +313,7 @@ function showTransferDetails() {
 }
 
 // Procesar pago (simulado)
-function executePayment(method) {
+async function executePayment(method) {
     const nights = Math.ceil((selectedCheckOut - selectedCheckIn) / (1000 * 60 * 60 * 24));
     const total = nights * PRICE_PER_NIGHT;
     const guestName = document.getElementById('guestName').value;
@@ -321,7 +321,6 @@ function executePayment(method) {
     const numGuests = document.getElementById('numGuests').value;
     const confirmationCode = 'VM-' + Math.floor(Math.random() * 100000);
 
-    // Simular procesamiento
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
         <div class="payment-processing">
@@ -331,26 +330,24 @@ function executePayment(method) {
         </div>
     `;
 
-    // Guardar reserva en localStorage
     const villaSelect = document.getElementById('villaSelect');
     const selectedVilla = villaSelect ? villaSelect.value : '1';
 
-    saveReservationToStorage({
-        id: confirmationCode,
-        guestName: guestName,
-        guestEmail: guestEmail,
-        villaNumber: selectedVilla,
-        checkIn: formatDate(selectedCheckIn),
-        checkOut: formatDate(selectedCheckOut),
-        numGuests: parseInt(numGuests),
-        total: total,
-        status: 'confirmed',
-        paymentMethod: method,
-        createdAt: new Date().toISOString()
-    });
+    try {
+        await saveReservationToStorage({
+            id: confirmationCode,
+            guestName: guestName,
+            guestEmail: guestEmail,
+            villaNumber: selectedVilla,
+            checkIn: formatDate(selectedCheckIn),
+            checkOut: formatDate(selectedCheckOut),
+            numGuests: parseInt(numGuests),
+            total: total,
+            status: 'confirmed',
+            paymentMethod: method,
+            createdAt: new Date().toISOString()
+        });
 
-    // Simular confirmación después de 2 segundos
-    setTimeout(() => {
         modalContent.innerHTML = `
             <div class="payment-success">
                 <div class="success-icon">✓</div>
@@ -366,7 +363,15 @@ function executePayment(method) {
                 <button class="confirm-btn" onclick="closePaymentModal(); resetForm();">Aceptar</button>
             </div>
         `;
-    }, 2000);
+    } catch (error) {
+        modalContent.innerHTML = `
+            <div class="payment-error">
+                <h3>Error</h3>
+                <p>No pudimos procesar tu reserva. Intenta nuevamente.</p>
+                <button class="cancel-btn" onclick="closePaymentModal()">Cerrar</button>
+            </div>
+        `;
+    }
 }
 
 // Cerrar modal
@@ -384,20 +389,46 @@ function resetForm() {
 }
 
 // ============================================
-// LOCALSTORAGE FUNCTIONS
+// FIREBASE IMPORTS
 // ============================================
-function getReservationsFromStorage() {
-    const data = localStorage.getItem('villasReservations');
-    return data ? JSON.parse(data) : [];
+import { db } from './firebase-config.js';
+import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// ============================================
+// DATA LOADING
+// ============================================
+async function getReservationsFromStorage() {
+    // For now we return empty array or fetch simple snapshot for checking availability locally
+    // Ideally availability check should be a server query or listener
+    // To keep it simple for this step, we will fetch once on load
+    try {
+        const querySnapshot = await getDocs(collection(db, "reservations"));
+        const reservations = [];
+        querySnapshot.forEach((doc) => {
+            reservations.push(doc.data());
+        });
+        return reservations;
+    } catch (e) {
+        console.error("Error fetching reservations: ", e);
+        return [];
+    }
 }
 
-function saveReservationToStorage(reservation) {
-    const reservations = getReservationsFromStorage();
-    reservations.push(reservation);
-    localStorage.setItem('villasReservations', JSON.stringify(reservations));
+async function saveReservationToStorage(reservation) {
+    try {
+        const docRef = await addDoc(collection(db, "reservations"), reservation);
+        console.log("Document written with ID: ", docRef.id);
+        return true;
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        alert("Error al guardar la reserva. Por favor intenta de nuevo.");
+        throw e;
+    }
 }
 
 function getBlockedDatesFromStorage() {
+    // Similar migration would be needed for blocked dates if we want them in firebase too
+    // returning empty for now to avoid breaking or need to migrate that too right now
     const data = localStorage.getItem('villasBlockedDates');
     return data ? JSON.parse(data) : [];
 }

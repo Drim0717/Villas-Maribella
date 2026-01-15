@@ -2,8 +2,14 @@
 // ADMIN PANEL - VILLAS MARIBELLA
 // ============================================
 
+import { db } from '../client/firebase-config.js';
+import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const ADMIN_PASSWORD = 'Maribella';
 const PRICE_PER_NIGHT = 45;
+
+let allReservations = []; // Global state for reservations
+let allBlockedDates = []; // Global state for blocked dates
 
 // ============================================
 // AUTHENTICATION
@@ -45,9 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Handle delete button clicks
         if (e.target.classList.contains('delete-btn-small')) {
-            const reservationId = e.target.getAttribute('data-reservation-id');
-            if (reservationId) {
-                deleteReservation(reservationId);
+            const firestoreId = e.target.getAttribute('data-firestore-id');
+            if (firestoreId) {
+                deleteReservation(firestoreId);
             }
         }
 
@@ -63,14 +69,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add month filter event listener
     const monthFilter = document.getElementById('monthFilter');
     if (monthFilter) {
-        monthFilter.addEventListener('change', loadReservations);
+        monthFilter.addEventListener('change', loadDashboardData);
     }
 });
 
 function showDashboard() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminDashboard').style.display = 'block';
-    loadDashboardData();
+
+    // Initialize Firestore Listener
+    initRealTimeUpdates();
+}
+
+function initRealTimeUpdates() {
+    const unsubscribe = onSnapshot(collection(db, "reservations"), (snapshot) => {
+        allReservations = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            data.firestoreId = doc.id; // Important for edit/delete
+            allReservations.push(data);
+        });
+        console.log("Datos actualizados desde Firebase", allReservations);
+        loadDashboardData();
+    }, (error) => {
+        console.error("Error obteniendo datos en tiempo real:", error);
+    });
 }
 
 function logout() {
@@ -82,18 +105,19 @@ function logout() {
 // DATA LOADING
 // ============================================
 function loadDashboardData() {
-    loadReservations();
+    loadReservationsTable(); // Renamed to avoid confusion
     loadBlockedDates();
     updateStatistics();
 }
 
 function refreshData() {
+    // With onSnapshot, manual refresh isn't strictly needed for data, but good for UI state
     loadDashboardData();
-    alert('Datos actualizados');
+    alert('Datos actualizados (Sincronización en tiempo real activa)');
 }
 
-function loadReservations() {
-    let reservations = getReservations();
+function loadReservationsTable() {
+    let reservations = [...allReservations]; // Copy from global state
     const tbody = document.getElementById('reservationsBody');
     tbody.innerHTML = '';
 
@@ -106,6 +130,9 @@ function loadReservations() {
             return checkInMonth === selectedMonth;
         });
     }
+
+    // Sort by date (newest first)
+    reservations.sort((a, b) => new Date(b.createdAt || b.checkIn) - new Date(a.createdAt || a.checkIn));
 
     if (reservations.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 2rem;">No hay reservas para este período</td></tr>';
@@ -132,7 +159,7 @@ function loadReservations() {
             <td><span class="status-badge ${reservation.status}">${getStatusText(reservation.status)}</span></td>
             <td class="action-buttons">
                 <button class="edit-btn-small" data-reservation-id="${reservation.id}">✏️</button>
-                <button class="delete-btn-small" data-reservation-id="${reservation.id}">🗑️</button>
+                <button class="delete-btn-small" data-firestore-id="${reservation.firestoreId}">🗑️</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -164,7 +191,7 @@ function loadBlockedDates() {
 }
 
 function updateStatistics() {
-    const reservations = getReservations();
+    const reservations = allReservations; // Use global state
     const blockedDates = getBlockedDates();
 
     // Total Reservations
@@ -195,13 +222,15 @@ function updateStatistics() {
 // ============================================
 // RESERVATION MANAGEMENT
 // ============================================
+// ============================================
+// RESERVATION MANAGEMENT
+// ============================================
 function editReservation(id) {
-    const reservations = getReservations();
-    const reservation = reservations.find(r => r.id === id);
+    const reservation = allReservations.find(r => r.id === id); // Find in global state
 
     if (!reservation) return;
 
-    document.getElementById('editReservationId').value = reservation.id;
+    document.getElementById('editReservationId').value = reservation.firestoreId; // Use Firestore ID for updates
     document.getElementById('editGuestName').value = reservation.guestName;
     document.getElementById('editGuestEmail').value = reservation.guestEmail;
     document.getElementById('editCheckIn').value = reservation.checkIn;
@@ -211,21 +240,17 @@ function editReservation(id) {
     document.getElementById('editModal').style.display = 'flex';
 }
 
-function handleEditReservation(e) {
+async function handleEditReservation(e) {
     e.preventDefault();
 
-    const id = document.getElementById('editReservationId').value;
-    const reservations = getReservations();
-    const index = reservations.findIndex(r => r.id === id);
-
-    if (index === -1) return;
+    const firestoreId = document.getElementById('editReservationId').value;
+    if (!firestoreId) return;
 
     const checkIn = document.getElementById('editCheckIn').value;
     const checkOut = document.getElementById('editCheckOut').value;
     const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
 
-    reservations[index] = {
-        ...reservations[index],
+    const updatedData = {
         guestName: document.getElementById('editGuestName').value,
         guestEmail: document.getElementById('editGuestEmail').value,
         checkIn: checkIn,
@@ -234,30 +259,38 @@ function handleEditReservation(e) {
         total: nights * PRICE_PER_NIGHT
     };
 
-    saveReservations(reservations);
-    closeEditModal();
-    loadReservations();
-    updateStatistics();
-    alert('Reserva actualizada exitosamente');
+    try {
+        await updateDoc(doc(db, "reservations", firestoreId), updatedData);
+        closeEditModal();
+        alert('Reserva actualizada exitosamente');
+    } catch (error) {
+        console.error("Error updating document: ", error);
+        alert("Error al actualizar la reserva");
+    }
 }
 
 function closeEditModal() {
     document.getElementById('editModal').style.display = 'none';
 }
 
-function deleteReservation(id) {
+async function deleteReservation(firestoreId) {
     if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) return;
 
-    let reservations = getReservations();
-    reservations = reservations.filter(r => r.id !== id);
-    saveReservations(reservations);
-    loadReservations();
-    updateStatistics();
-    alert('Reserva eliminada');
+    try {
+        await deleteDoc(doc(db, "reservations", firestoreId));
+        alert('Reserva eliminada');
+        // Snapshot listener will auto-update the UI
+    } catch (error) {
+        console.error("Error removing document: ", error);
+        alert("Error al eliminar la reserva");
+    }
 }
 
 // ============================================
 // CALENDAR BLOCKING
+// ============================================
+// ============================================
+// CALENDAR BLOCKING (Still LocalStorage for now to keep changes focused)
 // ============================================
 function handleBlockDates(e) {
     e.preventDefault();
@@ -299,14 +332,7 @@ function unblockDates(index) {
 // ============================================
 // LOCAL STORAGE FUNCTIONS
 // ============================================
-function getReservations() {
-    const data = localStorage.getItem('villasReservations');
-    return data ? JSON.parse(data) : [];
-}
-
-function saveReservations(reservations) {
-    localStorage.setItem('villasReservations', JSON.stringify(reservations));
-}
+// getReservations and saveReservations REMOVED - using Firebase
 
 function getBlockedDates() {
     const data = localStorage.getItem('villasBlockedDates');
