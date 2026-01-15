@@ -118,6 +118,19 @@ function refreshData() {
 
 function loadReservationsTable() {
     let reservations = [...allReservations]; // Copy from global state
+
+    // Cargar reservas locales (Backup)
+    const localReservations = JSON.parse(localStorage.getItem('villasReservationsBackup') || '[]');
+
+    // Fusionar evitando duplicados (por ID de reserva)
+    localReservations.forEach(localRes => {
+        if (!reservations.some(r => r.id === localRes.id)) {
+            // Marcar visualmente que es local
+            localRes.isLocal = true;
+            reservations.push(localRes);
+        }
+    });
+
     const tbody = document.getElementById('reservationsBody');
     tbody.innerHTML = '';
 
@@ -156,7 +169,10 @@ function loadReservationsTable() {
             <td>${nights}</td>
             <td>${reservation.numGuests}</td>
             <td>$${reservation.total.toFixed(2)}</td>
-            <td><span class="status-badge ${reservation.status}">${getStatusText(reservation.status)}</span></td>
+            <td>
+                <span class="status-badge ${reservation.status}">${getStatusText(reservation.status)}</span>
+                ${reservation.isLocal ? '<span style="font-size:0.8em; color:orange; display:block;">(Offline)</span>' : ''}
+            </td>
             <td class="action-buttons">
                 <button class="edit-btn-small" data-reservation-id="${reservation.id}">✏️</button>
                 <button class="delete-btn-small" data-firestore-id="${reservation.firestoreId}">🗑️</button>

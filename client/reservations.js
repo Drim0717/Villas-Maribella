@@ -474,13 +474,35 @@ async function getReservationsFromStorage() {
 
 async function saveReservationToStorage(reservation) {
     try {
-        const docRef = await addDoc(collection(db, "reservations"), reservation);
+        // Intentar guardar en Firestore con un timeout de 5 segundos
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Firestore timeout")), 5000)
+        );
+
+        const firestorePromise = addDoc(collection(db, "reservations"), reservation);
+
+        const docRef = await Promise.race([firestorePromise, timeoutPromise]);
         console.log("Document written with ID: ", docRef.id);
         return true;
     } catch (e) {
-        console.error("Error adding document: ", e);
-        alert("Error al guardar la reserva. Por favor intenta de nuevo.");
-        throw e;
+        console.warn("Error o timeout en Firestore, guardando localmente:", e);
+
+        // Fallback: Guardar en localStorage
+        try {
+            const localReservations = JSON.parse(localStorage.getItem('villasReservationsBackup') || '[]');
+            // Asegurar que tenga un ID (usamos el mismo código de confirmación si existe, o generamos uno)
+            if (!reservation.firestoreId) {
+                reservation.firestoreId = 'local_' + Date.now();
+            }
+            localReservations.push(reservation);
+            localStorage.setItem('villasReservationsBackup', JSON.stringify(localReservations));
+            console.log("Reserva guardada localmente (Backup)");
+            return true;
+        } catch (localError) {
+            console.error("Error fatal: No se pudo guardar ni en Firestore ni localmente", localError);
+            alert("Error al guardar la reserva. Por favor intenta de nuevo.");
+            throw localError;
+        }
     }
 }
 
