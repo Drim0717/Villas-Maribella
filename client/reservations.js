@@ -400,8 +400,8 @@ async function executePayment(method) {
 
         // Mensaje personalizado según el estado
         const title = method === 'transfer' ? '¡Reserva Pendiente!' : '¡Reserva Confirmada!';
-        const message = method === 'transfer' 
-            ? 'Tu reserva está pendiente de validación del pago.' 
+        const message = method === 'transfer'
+            ? 'Tu reserva está pendiente de validación del pago.'
             : 'Tu reserva ha sido procesada exitosamente.';
         const icon = method === 'transfer' ? '⏳' : '✓';
 
