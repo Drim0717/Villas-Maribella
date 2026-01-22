@@ -10,34 +10,24 @@ const PRICE_PER_NIGHT = 45;
 
 let allReservations = []; // Global state for reservations
 let allBlockedDates = []; // Global state for blocked dates
+let currentCalendarMonth = new Date().getMonth();
+let currentCalendarYear = new Date().getFullYear();
 
 // ============================================
 // AUTHENTICATION
 // ============================================
-document.addEventListener('DOMContentLoaded', function () {
-    // Check if already logged in
-    if (localStorage.getItem('adminLoggedIn') === 'true') {
-        showDashboard();
+function initializeEventListeners() {
+    // Block dates form
+    const blockDatesForm = document.getElementById('blockDatesForm');
+    if (blockDatesForm) {
+        blockDatesForm.addEventListener('submit', handleBlockDates);
     }
 
-    // Login form handler
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const password = document.getElementById('adminPassword').value;
-
-        if (password === ADMIN_PASSWORD) {
-            localStorage.setItem('adminLoggedIn', 'true');
-            showDashboard();
-        } else {
-            alert('Contraseña incorrecta');
-        }
-    });
-
-    // Block dates form
-    document.getElementById('blockDatesForm').addEventListener('submit', handleBlockDates);
-
     // Edit form
-    document.getElementById('editForm').addEventListener('submit', handleEditReservation);
+    const editForm = document.getElementById('editForm');
+    if (editForm) {
+        editForm.addEventListener('submit', handleEditReservation);
+    }
 
     // Event delegation for dynamically created buttons
     document.addEventListener('click', function (e) {
@@ -71,7 +61,47 @@ document.addEventListener('DOMContentLoaded', function () {
     if (monthFilter) {
         monthFilter.addEventListener('change', loadDashboardData);
     }
-});
+}
+
+function initializeApp() {
+    console.log('Initializing admin panel...');
+
+    // Setup all event listeners
+    initializeEventListeners();
+
+    // Check if already logged in
+    if (localStorage.getItem('adminLoggedIn') === 'true') {
+        showDashboard();
+        return;
+    }
+
+    // Login form handler
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showDashboard();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        });
+        console.log('Login form handler attached successfully');
+    } else {
+        console.error('Login form not found!');
+    }
+}
+
+// Handle both document ready states
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM is already ready
+    initializeApp();
+}
 
 function showDashboard() {
     document.getElementById('loginScreen').style.display = 'none';
@@ -155,8 +185,23 @@ function loadReservationsTable() {
     reservations.forEach(reservation => {
         const checkIn = new Date(reservation.checkIn);
         const checkOut = new Date(reservation.checkOut);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
         const villaNumber = reservation.villaNumber || 'N/A';
+
+        // Calculate remaining days until check-in
+        const daysUntilCheckIn = Math.ceil((checkIn - today) / (1000 * 60 * 60 * 24));
+        let remainingDaysText = '';
+        if (daysUntilCheckIn > 0) {
+            remainingDaysText = `<span style="color: #0077B6; font-weight: 600;">${daysUntilCheckIn}/${nights} días</span>`;
+        } else if (daysUntilCheckIn === 0) {
+            remainingDaysText = '<span style="color: #28a745; font-weight: 600;">Hoy</span>';
+        } else if (checkOut > today) {
+            remainingDaysText = '<span style="color: #ffc107; font-weight: 600;">En curso</span>';
+        } else {
+            remainingDaysText = '<span style="color: #999;">Completada</span>';
+        }
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -167,6 +212,7 @@ function loadReservationsTable() {
             <td>${formatDate(reservation.checkIn)}</td>
             <td>${formatDate(reservation.checkOut)}</td>
             <td>${nights}</td>
+            <td>${remainingDaysText}</td>
             <td>${reservation.numGuests}</td>
             <td>$${reservation.total.toFixed(2)}</td>
             <td>
@@ -252,6 +298,7 @@ function editReservation(id) {
     document.getElementById('editCheckIn').value = reservation.checkIn;
     document.getElementById('editCheckOut').value = reservation.checkOut;
     document.getElementById('editNumGuests').value = reservation.numGuests;
+    document.getElementById('editStatus').value = reservation.status || 'confirmed';
 
     document.getElementById('editModal').style.display = 'flex';
 }
@@ -272,6 +319,7 @@ async function handleEditReservation(e) {
         checkIn: checkIn,
         checkOut: checkOut,
         numGuests: parseInt(document.getElementById('editNumGuests').value),
+        status: document.getElementById('editStatus').value,
         total: nights * PRICE_PER_NIGHT
     };
 
@@ -382,10 +430,14 @@ function switchTab(tabName) {
 
     // Update tab content
     document.getElementById('reservationsTab').classList.remove('active');
+    document.getElementById('calendarViewTab').classList.remove('active');
     document.getElementById('calendarTab').classList.remove('active');
 
     if (tabName === 'reservations') {
         document.getElementById('reservationsTab').classList.add('active');
+    } else if (tabName === 'calendarView') {
+        document.getElementById('calendarViewTab').classList.add('active');
+        renderCalendar();
     } else {
         document.getElementById('calendarTab').classList.add('active');
     }
@@ -422,3 +474,77 @@ window.onclick = function (event) {
         closeEditModal();
     }
 }
+// ============================================
+// CALENDAR VIEW FUNCTIONS
+// ============================================
+function renderCalendar() {
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    document.getElementById('currentMonthYear').textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+    const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
+    const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    const calendarGrid = document.getElementById('calendarGrid');
+    calendarGrid.innerHTML = '';
+    const dayHeaders = ['Dom', 'Lun', 'Mar', 'Mi�', 'Jue', 'Vie', 'S�b'];
+    dayHeaders.forEach(day => {
+        const headerCell = document.createElement('div');
+        headerCell.className = 'calendar-day-header';
+        headerCell.textContent = day;
+        calendarGrid.appendChild(headerCell);
+    });
+    for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyCell);
+    }
+    const occupiedDates = getOccupiedDates();
+    const blockedDates = getBlockedDates();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        const occupancyInfo = occupiedDates.find(od => od.date === dateStr);
+        const blockInfo = blockedDates.find(bd => dateStr >= bd.startDate && dateStr <= bd.endDate);
+        if (blockInfo) {
+            dayCell.classList.add('blocked');
+            dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">🚫 Bloqueado</div>`;
+        } else if (occupancyInfo && occupancyInfo.guests.length > 0) {
+            dayCell.classList.add('occupied');
+            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name}</div>`).join('');
+            dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">${guestList}</div>`;
+        } else {
+            dayCell.classList.add('available');
+            dayCell.innerHTML = `<div class="day-number">${day}</div>`;
+        }
+        calendarGrid.appendChild(dayCell);
+    }
+}
+function getOccupiedDates() {
+    const occupiedMap = {};
+    allReservations.forEach(reservation => {
+        const checkIn = new Date(reservation.checkIn);
+        const checkOut = new Date(reservation.checkOut);
+        const villaNum = reservation.villaNumber || 'N/A';
+        for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
+            const dateStr = d.toISOString().split('T')[0];
+            if (!occupiedMap[dateStr]) {
+                occupiedMap[dateStr] = { date: dateStr, guests: [] };
+            }
+            occupiedMap[dateStr].guests.push({ name: reservation.guestName, villa: villaNum });
+        }
+    });
+    return Object.values(occupiedMap);
+}
+function changeMonth(delta) {
+    currentCalendarMonth += delta;
+    if (currentCalendarMonth > 11) {
+        currentCalendarMonth = 0;
+        currentCalendarYear++;
+    } else if (currentCalendarMonth < 0) {
+        currentCalendarMonth = 11;
+        currentCalendarYear--;
+    }
+    renderCalendar();
+}
+window.changeMonth = changeMonth;

@@ -1,6 +1,9 @@
 // Import Firebase functions from CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+console.log("Firebase Config: Inicializando...");
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,5 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app, "villamaribella");
 const analytics = getAnalytics(app);
+
+console.log("Firebase Config: DB y Analytics listos");
 
 export { db, analytics };

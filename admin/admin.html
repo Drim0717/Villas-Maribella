@@ -75,6 +75,7 @@
         <!-- TABS -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('reservations')">📋 Reservas</button>
+            <button class="tab-btn" onclick="switchTab('calendarView')">📆 Calendario de Ocupación</button>
             <button class="tab-btn" onclick="switchTab('calendar')">📅 Bloquear Fechas</button>
         </div>
 
@@ -112,6 +113,7 @@
                             <th>Check-in</th>
                             <th>Check-out</th>
                             <th>Noches</th>
+                            <th>Días Restantes</th>
                             <th>Personas</th>
                             <th>Total</th>
                             <th>Estado</th>
@@ -122,6 +124,37 @@
                         <!-- Populated by JavaScript -->
                     </tbody>
                 </table>
+            </div>
+        </section>
+
+        <!-- CALENDAR VIEW TAB -->
+        <section id="calendarViewTab" class="tab-content">
+            <div class="section-header">
+                <h2>📆 Calendario de Ocupación</h2>
+            </div>
+            <div class="calendar-container">
+                <div class="calendar-navigation">
+                    <button onclick="changeMonth(-1)" class="nav-btn">← Anterior</button>
+                    <h3 id="currentMonthYear"></h3>
+                    <button onclick="changeMonth(1)" class="nav-btn">Siguiente →</button>
+                </div>
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <span class="legend-color available"></span>
+                        <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color occupied"></span>
+                        <span>Ocupado</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color blocked"></span>
+                        <span>Bloqueado</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -191,6 +224,14 @@
                         <label>Número de Personas:</label>
                         <input type="number" id="editNumGuests" min="1" max="8" required>
                     </div>
+                    <div class="form-group">
+                        <label>Estado de la Reserva:</label>
+                        <select id="editStatus" class="status-select" required>
+                            <option value="confirmed">Confirmada</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="cancelled">Cancelada</option>
+                        </select>
+                    </div>
                     <div class="modal-actions">
                         <button type="submit" class="save-btn">Guardar Cambios</button>
                         <button type="button" onclick="closeEditModal()" class="cancel-btn">Cancelar</button>
@@ -199,6 +240,36 @@
             </div>
         </div>
     </div>
+
+    <!-- File protocol detection and warning -->
+    <script>
+        // Detect if page is opened via file:// protocol
+        if (window.location.protocol === 'file:') {
+            // Create warning banner
+            const warningBanner = document.createElement('div');
+            warningBanner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+                color: white;
+                padding: 15px 20px;
+                text-align: center;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideDown 0.3s ease-out;
+            `;
+            warningBanner.innerHTML = `
+                ⚠️ <strong>ADVERTENCIA:</strong> Esta página debe abrirse con un servidor local (como Live Server en VS Code) para que funcione correctamente. 
+                Los módulos JavaScript están bloqueados por seguridad cuando se abre directamente desde archivos.
+            `;
+            document.body.insertBefore(warningBanner, document.body.firstChild);
+        }
+    </script>
 
     <script type="module" src="admin.js"></script>
 </body>
