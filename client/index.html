@@ -358,15 +358,14 @@
 
                             <div class="bg-light p-3 rounded-3 mb-4">
                                 <h6 class="fw-bold mb-3 border-bottom pb-2">Resumen de Precio</h6>
-                                <div class="d-flex justify-content-between mb-1 small">
-                                    <span>Noches:</span>
-                                    <strong id="numNights">0</strong>
+                                <div id="priceBreakdown" class="small mb-2">
+                                    <!-- Populated by JS -->
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Noches:</span>
+                                        <strong id="numNights">0</strong>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between mb-2 small">
-                                    <span>Precio/noche:</span>
-                                    <strong>$45.00</strong>
-                                </div>
-                                <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
+                                <div class="d-flex justify-content-between fs-5 fw-bold text-primary border-top pt-2">
                                     <span>Total:</span>
                                     <span id="totalPrice">$0.00</span>
                                 </div>
