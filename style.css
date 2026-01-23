@@ -18,6 +18,10 @@
     --dark-text: #2B2D42;
     --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
     --gradient-hero: linear-gradient(135deg, rgba(0, 180, 216, 0.9) 0%, rgba(0, 119, 182, 0.8) 100%);
+
+    /* Fluid Spacing & Sizes */
+    --container-padding: clamp(1rem, 5vw, 2rem);
+    --section-gap: clamp(3rem, 8vw, 5rem);
 }
 
 /* ============================================
@@ -157,14 +161,16 @@ body {
 
 .hero h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 4rem;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    /* Fluir entre 2.5rem y 5rem */
     font-weight: 700;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    line-height: 1.1;
 }
 
 .hero p {
-    font-size: 1.3rem;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
     margin-bottom: 2rem;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
 }
@@ -196,13 +202,15 @@ section {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    width: 90%;
+    /* Mejor control en móviles */
 }
 
 .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 700;
     text-align: center;
     margin-bottom: 1rem;
@@ -282,7 +290,8 @@ section {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Auto-fill llena el espacio disponible de forma inteligente */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     margin-top: 3rem;
 }
@@ -326,7 +335,7 @@ section {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-top: 3rem;
 }
