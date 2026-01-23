@@ -296,14 +296,16 @@ function updateStatistics() {
     const totalRevenue = reservations.reduce((sum, r) => sum + r.total, 0);
     document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
 
-    // Occupancy Rate (simplified calculation)
+    // Occupancy Rate (simplified calculation) - REMOVED from UI
+    /*
     const totalNights = reservations.reduce((sum, r) => {
         const checkIn = new Date(r.checkIn);
         const checkOut = new Date(r.checkOut);
         return sum + Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
     }, 0);
     const occupancyRate = Math.min(100, Math.round((totalNights / 365) * 100));
-    document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
+    const occupancyElem = document.getElementById('occupancyRate');
+    if (occupancyElem) occupancyElem.textContent = `${occupancyRate}%`;
 
     // Blocked Days Count
     const blockedDaysCount = blockedDates.reduce((sum, block) => {
@@ -311,7 +313,9 @@ function updateStatistics() {
         const end = new Date(block.endDate);
         return sum + Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
     }, 0);
-    document.getElementById('blockedDaysCount').textContent = blockedDaysCount;
+    const blockedElem = document.getElementById('blockedDaysCount');
+    if (blockedElem) blockedElem.textContent = blockedDaysCount; 
+    */
 }
 
 // ============================================
