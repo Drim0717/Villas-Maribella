@@ -86,19 +86,24 @@
                 <div class="filter-controls">
                     <select id="monthFilter" class="month-filter">
                         <option value="">Todos los meses</option>
-                        <option value="2025-01">Enero 2025</option>
-                        <option value="2025-02">Febrero 2025</option>
-                        <option value="2025-03">Marzo 2025</option>
-                        <option value="2025-04">Abril 2025</option>
-                        <option value="2025-05">Mayo 2025</option>
-                        <option value="2025-06">Junio 2025</option>
-                        <option value="2025-07">Julio 2025</option>
-                        <option value="2025-08">Agosto 2025</option>
-                        <option value="2025-09">Septiembre 2025</option>
-                        <option value="2025-10">Octubre 2025</option>
-                        <option value="2025-11">Noviembre 2025</option>
-                        <option value="2025-12">Diciembre 2025</option>
+                        <option value="2026-01">Enero 2026</option>
+                        <option value="2026-02">Febrero 2026</option>
+                        <option value="2026-03">Marzo 2026</option>
+                        <option value="2026-04">Abril 2026</option>
+                        <option value="2026-05">Mayo 2026</option>
+                        <option value="2026-06">Junio 2026</option>
+                        <option value="2026-07">Julio 2026</option>
+                        <option value="2026-08">Agosto 2026</option>
+                        <option value="2026-09">Septiembre 2026</option>
+                        <option value="2026-10">Octubre 2026</option>
+                        <option value="2026-11">Noviembre 2026</option>
+                        <option value="2026-12">Diciembre 2026</option>
                     </select>
+                    <div class="checkbox-wrapper" style="display: inline-flex; align-items: center; margin-left: 10px;">
+                        <input type="checkbox" id="showPastReservations" style="width: auto; margin-right: 5px;">
+                        <label for="showPastReservations" style="font-size: 0.9rem; color: #666; cursor: pointer;">Ver
+                            pasadas</label>
+                    </div>
                     <button onclick="showAddReservation()" class="add-btn">+ Agregar Reserva Manual</button>
                 </div>
             </div>
@@ -131,6 +136,18 @@
         <section id="calendarViewTab" class="tab-content">
             <div class="section-header">
                 <h2>📆 Calendario de Ocupación</h2>
+                <div class="calendar-filters">
+                    <select id="calendarVillaFilter" class="villa-filter"
+                        style="padding: 5px; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="all">Todas las Villas</option>
+                        <option value="1">Villa #1</option>
+                        <option value="2">Villa #2</option>
+                        <option value="3">Villa #3</option>
+                        <option value="4">Villa #4</option>
+                        <option value="5">Villa #5</option>
+                        <option value="6">Villa #6</option>
+                    </select>
+                </div>
             </div>
             <div class="calendar-container">
                 <div class="calendar-navigation">
@@ -222,7 +239,7 @@
                     </div>
                     <div class="form-group">
                         <label>Número de Personas:</label>
-                        <input type="number" id="editNumGuests" min="1" max="8" required>
+                        <input type="number" id="editNumGuests" min="1" max="4" required>
                     </div>
                     <div class="form-group">
                         <label>Estado de la Reserva:</label>

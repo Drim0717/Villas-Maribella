@@ -259,6 +259,12 @@ function handleReservation(e) {
         return;
     }
 
+    const guestsValue = parseInt(document.getElementById('numGuests').value);
+    if (guestsValue > 4) {
+        alert('El máximo de personas permitidas por villa es 4.');
+        return;
+    }
+
     const guestName = document.getElementById('guestName').value;
     const guestEmail = document.getElementById('guestEmail').value;
     const numGuests = document.getElementById('numGuests').value;
@@ -524,13 +530,7 @@ const villaImages = {
     3: ['../images/bano.jpg', '../images/sala.jpg', '../images/cocina.jpg'],
     4: ['../images/sala.jpg', '../images/bano.jpg', '../images/cocina.jpg'],
     5: ['../images/cocina.jpg', '../images/bano.jpg', '../images/sala.jpg'],
-    6: ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg'],
-    7: ['../images/sala.jpg', '../images/cocina.jpg', '../images/bano.jpg'],
-    8: ['../images/cocina.jpg', '../images/sala.jpg', '../images/bano.jpg'],
-    9: ['../images/bano.jpg', '../images/sala.jpg', '../images/cocina.jpg'],
-    10: ['../images/sala.jpg', '../images/bano.jpg', '../images/cocina.jpg'],
-    11: ['../images/cocina.jpg', '../images/bano.jpg', '../images/sala.jpg'],
-    12: ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg']
+    6: ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg']
 };
 
 let currentVillaImageIndex = 0;

@@ -61,6 +61,16 @@ function initializeEventListeners() {
     if (monthFilter) {
         monthFilter.addEventListener('change', loadDashboardData);
     }
+
+    const showPastReservations = document.getElementById('showPastReservations');
+    if (showPastReservations) {
+        showPastReservations.addEventListener('change', loadReservationsTable);
+    }
+
+    const calendarVillaFilter = document.getElementById('calendarVillaFilter');
+    if (calendarVillaFilter) {
+        calendarVillaFilter.addEventListener('change', renderCalendar);
+    }
 }
 
 function initializeApp() {
@@ -165,13 +175,22 @@ function loadReservationsTable() {
     tbody.innerHTML = '';
 
     // Aplicar filtro por mes si está seleccionado
+    // Aplicar filtro por mes si está seleccionado
     const monthFilter = document.getElementById('monthFilter');
     if (monthFilter && monthFilter.value) {
-        const selectedMonth = monthFilter.value; // formato: "2025-01"
+        const selectedMonth = monthFilter.value; // formato: "2026-01"
         reservations = reservations.filter(reservation => {
-            const checkInMonth = reservation.checkIn.substring(0, 7); // "2025-01-15" -> "2025-01"
+            const checkInMonth = reservation.checkIn.substring(0, 7);
             return checkInMonth === selectedMonth;
         });
+    }
+
+    // Filtro para ocultar reservas pasadas (default: ocultas)
+    const showPastCheckbox = document.getElementById('showPastReservations');
+    // Si el checkbox NO está marcado, filtramos las pasadas (checkOut < hoy)
+    if (showPastCheckbox && !showPastCheckbox.checked) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        reservations = reservations.filter(reservation => reservation.checkOut >= todayStr);
     }
 
     // Sort by date (newest first)
@@ -500,18 +519,33 @@ function renderCalendar() {
     }
     const occupiedDates = getOccupiedDates();
     const blockedDates = getBlockedDates();
+    const calendarVillaFilter = document.getElementById('calendarVillaFilter');
+    const selectedVilla = calendarVillaFilter ? calendarVillaFilter.value : 'all';
+
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const dayCell = document.createElement('div');
         dayCell.className = 'calendar-day';
-        const occupancyInfo = occupiedDates.find(od => od.date === dateStr);
+
+        let occupancyInfo = occupiedDates.find(od => od.date === dateStr);
+        // Filtrar info de ocupación si hay una villa seleccionada
+        if (occupancyInfo && selectedVilla !== 'all') {
+            // Clonar para no mutar original y filtrar guests
+            const filteredGuests = occupancyInfo.guests.filter(g => g.villa == selectedVilla);
+            if (filteredGuests.length > 0) {
+                occupancyInfo = { ...occupancyInfo, guests: filteredGuests };
+            } else {
+                occupancyInfo = null; // No hay ocupación para esta villa en este día
+            }
+        }
+
         const blockInfo = blockedDates.find(bd => dateStr >= bd.startDate && dateStr <= bd.endDate);
         if (blockInfo) {
             dayCell.classList.add('blocked');
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">🚫 Bloqueado</div>`;
         } else if (occupancyInfo && occupancyInfo.guests.length > 0) {
             dayCell.classList.add('occupied');
-            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name}</div>`).join('');
+            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name} (V${g.villa})</div>`).join('');
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">${guestList}</div>`;
         } else {
             dayCell.classList.add('available');
