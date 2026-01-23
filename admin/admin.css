@@ -116,6 +116,12 @@ h6 {
     gap: 4px;
 }
 
+@media (max-width: 576px) {
+    .calendar-grid-bootstrap {
+        gap: 1px;
+    }
+}
+
 .calendar-day {
     aspect-ratio: 1;
     display: flex;
@@ -128,6 +134,21 @@ h6 {
     background-color: #f8f9fa;
     position: relative;
     border: 1px solid #eee;
+    overflow: hidden;
+    /* Prevent text overflow */
+}
+
+@media (max-width: 576px) {
+    .calendar-day {
+        font-size: 0.65rem;
+        border-radius: 4px;
+    }
+
+    .calendar-day.occupied {
+        font-size: 0.55rem;
+        line-height: 1;
+        padding: 1px;
+    }
 }
 
 .calendar-day:hover {
@@ -140,6 +161,9 @@ h6 {
     font-weight: bold;
     font-size: 0.75rem;
     border-color: #ffcccc;
+    text-align: center;
+    word-break: break-word;
+    /* Wrap long names */
 }
 
 .calendar-day.blocked {
