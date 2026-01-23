@@ -432,7 +432,8 @@ function saveBlockedDates(blockedDates) {
 // window.logout = logout; 
 // window.switchTab = switchTab; 
 // window.refreshData = refreshData;
-window.closeEditModal = closeEditModal; // Still used by close button in modal if onclick is present? Bootstrap handles this usually.
+window.closeEditModal = closeEditModal;
+window.showAddReservation = showAddReservation; // Critical for inline onclick in admin.html
 
 // ============================================
 // TAB SWITCHING (Removed - handled by Bootstrap)
@@ -476,7 +477,11 @@ function renderCalendar() {
     const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
-    const calendarGrid = document.getElementById('calendarGrid');
+    const calendarGrid = document.getElementById('adminCalendar'); // Fixed ID mismatch
+    if (!calendarGrid) {
+        console.error("Critical: 'adminCalendar' element not found in DOM.");
+        return;
+    }
     calendarGrid.innerHTML = '';
     const dayHeaders = ['Dom', 'Lun', 'Mar', 'Mi�', 'Jue', 'Vie', 'S�b'];
     dayHeaders.forEach(day => {

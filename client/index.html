@@ -352,8 +352,12 @@
                             </div>
                             <div class="mb-4">
                                 <label for="numGuests" class="form-label fw-bold small">Huéspedes</label>
-                                <input type="number" class="form-control" id="numGuests" min="1" max="4" value="2"
-                                    required>
+                                <select class="form-select" id="numGuests" required>
+                                    <option value="1">1 Persona</option>
+                                    <option value="2" selected>2 Personas</option>
+                                    <option value="3">3 Personas</option>
+                                    <option value="4">4 Personas</option>
+                                </select>
                             </div>
 
                             <div class="bg-light p-3 rounded-3 mb-4">
