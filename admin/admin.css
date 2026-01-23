@@ -78,6 +78,21 @@ h6 {
 }
 
 /* ============================================
+   TABS & SECTIONS
+   ============================================ */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+    padding: 0 2rem;
+}
+
+/* Bootstrap handles .nav-pills and .tab-content visibility.
+   Removing conflicting custom overrides. */
+
+
+/* ============================================
    DASHBOARD TABS
    ============================================ */
 .nav-pills .nav-link {
