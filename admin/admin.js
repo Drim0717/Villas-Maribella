@@ -263,6 +263,7 @@ function loadReservationsTable() {
 function loadBlockedDates() {
     const blockedDates = getBlockedDates();
     const container = document.getElementById('blockedDatesList');
+    if (!container) return; // Guard clause
     container.innerHTML = '';
 
     if (blockedDates.length === 0) {

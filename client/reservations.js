@@ -209,6 +209,8 @@ function updatePrice() {
     const nightsDisplay = document.getElementById('numNights');
     const priceBreakdown = document.getElementById('priceBreakdown');
 
+    if (!priceBreakdown) return; // Guard clause
+
     if (!selectedCheckIn || !selectedCheckOut) {
         priceDisplay.textContent = '$0.00';
         nightsDisplay.textContent = '0';
