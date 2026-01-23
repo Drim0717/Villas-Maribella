@@ -972,11 +972,20 @@ section {
 
 .calendar-section {
     flex: 1;
-    min-width: 400px;
+    min-width: 300px;
+    /* Reduced from 400px to prevent overflow on small screens */
     background: var(--white);
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 500px) {
+    .calendar-section {
+        padding: 1rem;
+        /* Less padding on mobile */
+        min-width: 100%;
+    }
 }
 
 .calendar-header {
@@ -1029,17 +1038,29 @@ section {
     font-weight: 700;
 }
 
-.calendar-grid {
+.calendar-grid,
+.calendar-grid-bootstrap {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
+    /* Default gap */
+}
+
+/* Ajustes Responsive para el Calendario */
+@media (max-width: 480px) {
+
+    .calendar-grid,
+    .calendar-grid-bootstrap {
+        gap: 2px !important;
+    }
 }
 
 .calendar-day-header {
     text-align: center;
     font-weight: 600;
     color: var(--deep-ocean);
-    padding: 10px;
+    padding: 5px;
+    /* Reduced specific padding */
     font-size: 0.9rem;
 }
 
@@ -1055,6 +1076,18 @@ section {
     border: 2px solid transparent;
     color: #2B2D42;
     background: #fff;
+    font-size: 0.9rem;
+    /* Default size */
+}
+
+@media (max-width: 480px) {
+    .calendar-day {
+        font-size: 0.75rem;
+        /* Smaller text on mobile */
+        aspect-ratio: 1;
+        /* Keep square */
+        height: auto;
+    }
 }
 
 .calendar-day:not(.empty):not(.past):not(.reserved):hover {

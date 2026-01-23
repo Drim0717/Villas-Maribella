@@ -209,7 +209,7 @@ function updatePrice() {
     const nightsDisplay = document.getElementById('numNights');
     const priceBreakdown = document.getElementById('priceBreakdown');
 
-    if (!priceBreakdown) return; // Guard clause
+    if (!priceBreakdown || !priceDisplay || !nightsDisplay) return; // Robust Guard clause
 
     if (!selectedCheckIn || !selectedCheckOut) {
         priceDisplay.textContent = '$0.00';
@@ -226,7 +226,8 @@ function updatePrice() {
     priceDisplay.textContent = `$${total.toFixed(2)}`;
 
     // Mostrar desglose
-    const numGuests = document.getElementById('numGuests').value || 1;
+    const numGuestsElem = document.getElementById('numGuests');
+    const numGuests = numGuestsElem ? (numGuestsElem.value || 1) : 1;
     priceBreakdown.innerHTML = `
         <div class="price-item">
             <span>$${PRICE_PER_NIGHT} × ${nights} noche(s)</span>
