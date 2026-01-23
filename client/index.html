@@ -7,300 +7,385 @@
     <meta name="description"
         content="Villas Maribella - Beach Lodge en Cabarete, República Dominicana. El lugar perfecto para tus vacaciones tropicales.">
     <title>Villas Maribella - Beach Lodge Cabarete</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
     <!-- NAVEGACIÓN -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
+    <!-- NAVEGACIÓN -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand logo" href="#">
                 <img src="../images/Logo.png" alt="Villas Maribella" class="logo-image">
-            </div>
-            <button class="hamburger-menu" id="hamburgerMenu" aria-label="Abrir menú">
-                <span></span>
-                <span></span>
-                <span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <ul class="nav-links">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#acerca">Acerca</a></li>
-                <li><a href="#amenidades">Amenidades</a></li>
-                <li><a href="#galeria">Galería</a></li>
-                <li><a href="#contacto">Contacto</a></li>
-            </ul>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav gap-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#acerca">Acerca</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#amenidades">Amenidades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#galeria">Galería</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-4 rounded-pill" href="#contacto">Reserva
+                            Ahora</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
     <!-- SECCIÓN HERO -->
-    <section id="inicio" class="hero">
-        <div class="hero-content">
-            <h1>El Lugar Perfecto</h1>
-            <p>Un espacio inigualable para residir y pasar momentos de paz junto a la naturaleza tropical que nos ofrece
-                Cabarete. Un paraíso a pocos metros de la playa.</p>
-            <a href="#contacto" class="cta-button">Reserva Ahora</a>
+    <!-- SECCIÓN HERO -->
+    <section id="inicio" class="hero d-flex align-items-center vh-100 position-relative">
+        <div class="container text-center text-white position-relative z-index-2">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 hero-content">
+                    <h1 class="display-3 fw-bold mb-4">El Lugar Perfecto</h1>
+                    <p class="lead mb-5">Un espacio inigualable para residir y pasar momentos de paz junto a la
+                        naturaleza tropical que nos ofrece Cabarete. Un paraíso a pocos metros de la playa.</p>
+                    <a href="#contacto"
+                        class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary shadow-lg">Reserva Tu
+                        Villa</a>
+                </div>
+            </div>
         </div>
+        <div class="hero-overlay"></div>
     </section>
 
     <!-- SECCIÓN ACERCA DEL PROYECTO -->
-    <section id="acerca" class="about">
+    <!-- SECCIÓN ACERCA DEL PROYECTO -->
+    <section id="acerca" class="py-5 bg-light about-section">
         <div class="container">
-            <h2 class="section-title">Acerca del Proyecto</h2>
-            <p class="section-subtitle">Residencial Villas Maribella es un proyecto cerrado en la zona turística de
-                Cabarete, Puerto Plata</p>
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-primary mb-3">Acerca del Proyecto</h2>
+                <p class="lead text-muted mx-auto" style="max-width: 700px;">Residencial Villas Maribella es un proyecto
+                    cerrado en la zona turística de Cabarete, Puerto Plata</p>
+            </div>
 
-            <div class="about-content">
-                <div class="about-text">
-                    <h3>Arquitectura Tropical</h3>
-                    <p>Nuestro diseño cuenta con una arquitectura típica del Caribe, buscando un ambiente natural,
-                        tropical y armonioso. Ideales para disfrutar de sus vacaciones de una manera amplia, cómoda y
-                        relajada.</p>
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 order-lg-1">
+                    <div class="mb-4">
+                        <h3 class="h4 text-primary fw-bold mb-3">Arquitectura Tropical</h3>
+                        <p class="text-secondary">Nuestro diseño cuenta con una arquitectura típica del Caribe, buscando
+                            un ambiente natural, tropical y armonioso. Ideales para disfrutar de sus vacaciones de una
+                            manera amplia, cómoda y relajada.</p>
+                    </div>
 
-                    <h3>Ubicación Estratégica</h3>
-                    <p>Con una ubicación perfecta para el turismo de playa y los aficionados de los deportes acuáticos
-                        tales como Windsurf y Kitesurf. A solo 300 metros de la playa, reconocida mundialmente por sus
-                        olas perfectas y vientos constantes.</p>
+                    <div class="mb-4">
+                        <h3 class="h4 text-primary fw-bold mb-3">Ubicación Estratégica</h3>
+                        <p class="text-secondary">Con una ubicación perfecta para el turismo de playa y los aficionados
+                            de los deportes acuáticos tales como Windsurf y Kitesurf. A solo 300 metros de la playa,
+                            reconocida mundialmente por sus olas perfectas y vientos constantes.</p>
+                    </div>
 
-                    <h3>Paz y Diversión</h3>
-                    <p>Te esperamos para ofrecerte una combinación perfecta para el disfrute de tus vacaciones en un
-                        ambiente acogedor y perfecto para diversas actividades al aire libre.</p>
+                    <div>
+                        <h3 class="h4 text-primary fw-bold mb-3">Paz y Diversión</h3>
+                        <p class="text-secondary">Te esperamos para ofrecerte una combinación perfecta para el disfrute
+                            de tus vacaciones en un ambiente acogedor y perfecto para diversas actividades al aire
+                            libre.</p>
+                    </div>
                 </div>
-                <div class="about-image">
-                    <img src="../images/piscina_noche.png" alt="Villas Maribella de noche">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="about-image-wrapper shadow-lg rounded-4 overflow-hidden">
+                        <img src="../images/piscina_noche.png" alt="Villas Maribella de noche" class="img-fluid w-100">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- SECCIÓN AMENIDADES -->
-    <section id="amenidades" class="features">
+    <section id="amenidades" class="py-5">
         <div class="container">
-            <h2 class="section-title">Las Villas</h2>
-            <p class="section-subtitle">Disponibles de 1 y 2 habitaciones, completamente equipadas y amuebladas</p>
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-primary mb-3">Las Villas</h2>
+                <p class="lead text-muted">Disponibles de 1 y 2 habitaciones, completamente equipadas y amuebladas</p>
+            </div>
 
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🏠</div>
-                    <h3>Villas Equipadas</h3>
-                    <p>Completamente amuebladas con todo lo necesario para una estadía confortable</p>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">🏠</div>
+                            <h3 class="h4 fw-bold">Villas Equipadas</h3>
+                            <p class="text-muted">Completamente amuebladas con todo lo necesario para una estadía
+                                confortable</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🏊</div>
-                    <h3>Piscina & Casa Club</h3>
-                    <p>Piscina comunitaria, bar y áreas sociales para tu disfrute</p>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">🏊</div>
+                            <h3 class="h4 fw-bold">Piscina & Casa Club</h3>
+                            <p class="text-muted">Piscina comunitaria, bar y áreas sociales para tu disfrute</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🌴</div>
-                    <h3>Áreas Verdes</h3>
-                    <p>Hermosos jardines tropicales y espacios para relajarte</p>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">🌴</div>
+                            <h3 class="h4 fw-bold">Áreas Verdes</h3>
+                            <p class="text-muted">Hermosos jardines tropicales y espacios para relajarte</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🅿️</div>
-                    <h3>Parqueo Seguro</h3>
-                    <p>Estacionamiento privado con portón eléctrico</p>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">🅿️</div>
+                            <h3 class="h4 fw-bold">Parqueo Seguro</h3>
+                            <p class="text-muted">Estacionamiento privado con portón eléctrico</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Vigilancia 24/7</h3>
-                    <p>Seguridad permanente y verja perimetral</p>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">🛡️</div>
+                            <h3 class="h4 fw-bold">Vigilancia 24/7</h3>
+                            <p class="text-muted">Seguridad permanente y verja perimetral</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Planta Eléctrica</h3>
-                    <p>Energía ininterrumpida y cisterna de agua</p>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3 text-primary fs-1">⚡</div>
+                            <h3 class="h4 fw-bold">Planta Eléctrica</h3>
+                            <p class="text-muted">Energía ininterrumpida y cisterna de agua</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- SECCIÓN GALERÍA -->
-    <section id="galeria" class="gallery">
+    <section id="galeria" class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title">Galería</h2>
-            <p class="section-subtitle">Descubre la belleza de Villas Maribella</p>
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-primary mb-3">Galería</h2>
+                <p class="lead text-muted">Descubre la belleza de Villas Maribella</p>
+            </div>
 
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img src="../images/piscina_dia.jpg" alt="Piscina con palmeras de día">
+            <div class="row g-3">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/piscina_dia.jpg" alt="Piscina con palmeras de día"
+                            class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="../images/piscina_noche.png" alt="Piscina iluminada de noche">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/piscina_noche.png" alt="Piscina iluminada de noche"
+                            class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="../images/sala.jpg" alt="Sala de estar con sofá azul">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/sala.jpg" alt="Sala de estar con sofá azul"
+                            class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="../images/cocina.jpg" alt="Cocina y comedor equipados">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/cocina.jpg" alt="Cocina y comedor equipados"
+                            class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="../images/bano.jpg" alt="Baño moderno">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/bano.jpg" alt="Baño moderno" class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
-                <div class="gallery-item">
-                    <img src="../images/villa_hero.jpg" alt="Vista de las villas">
+                <div class="col-md-4 col-sm-6">
+                    <div class="gallery-item rounded-3 overflow-hidden shadow-sm h-100">
+                        <img src="../images/villa_hero.jpg" alt="Vista de las villas"
+                            class="img-fluid w-100 h-100 object-fit-cover">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- SECCIÓN RESERVAS -->
-    <section id="contacto" class="contact">
-        <div class="container">
-            <h2 class="section-title">Reserva tu Villa</h2>
-            <p class="section-subtitle">Selecciona tus fechas y reserva tu estadía en el paraíso</p>
-
-            <!-- GALERÍA DE VILLAS -->
-            <div class="villa-gallery-section">
-                <h3 class="villa-gallery-title">🏝️ Conoce Nuestras Villas</h3>
-                <p class="villa-gallery-subtitle">Selecciona una villa para ver sus características</p>
-
-                <div class="villa-selector">
-                    <button class="villa-number-btn active" data-villa="1A">1</button>
-                    <button class="villa-number-btn" data-villa="2B">2</button>
-                    <button class="villa-number-btn" data-villa="3D">3</button>
-                    <button class="villa-number-btn" data-villa="4E">4</button>
-                    <button class="villa-number-btn" data-villa="5F">5</button>
-                    <button class="villa-number-btn" data-villa="6G">6</button>
-                </div>
-
-                <div class="villa-display">
-                    <div class="villa-images">
-                        <button class="image-nav-btn prev-btn" id="prevImage">‹</button>
-                        <img id="villaMainImage" src="../images/sala.jpg" alt="Interior de Villa">
-                        <button class="image-nav-btn next-btn" id="nextImage">›</button>
-                        <div class="image-indicator" id="imageIndicator">1 / 3</div>
-                    </div>
-
-                    <div class="villa-info">
-                        <h4 id="villaTitle">Villa #1</h4>
-                        <p class="villa-description">Disfruta de una estadía única en nuestras villas completamente
-                            equipadas</p>
-
-                        <div class="villa-amenities">
-                            <h5>✨ Amenidades Incluidas:</h5>
-                            <ul class="amenities-list">
-                                <li><span class="amenity-icon">📺</span> Televisión moderna</li>
-                                <li><span class="amenity-icon">🍳</span> Cocina completa</li>
-                                <li><span class="amenity-icon">🌴</span> Mini terraza privada</li>
-                                <li><span class="amenity-icon">❄️</span> Nevera y estufa</li>
-                                <li><span class="amenity-icon">🌬️</span> Aire acondicionado</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+    <section id="contacto" class="py-5 contact-section text-white position-relative">
+        <div class="container position-relative z-index-2">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold text-white mb-3">Reserva tu Villa</h2>
+                <p class="lead text-white-50">Selecciona tus fechas y reserva tu estadía en el paraíso</p>
             </div>
 
-            <div class="reservation-container">
-                <!-- CALENDARIO -->
-                <div class="calendar-section">
-                    <div class="calendar-header">
-                        <button id="prevMonth" class="month-nav">‹</button>
-                        <h3 id="monthYear"></h3>
-                        <button id="nextMonth" class="month-nav">›</button>
-                    </div>
-                    <div class="calendar-villa-indicator" id="calendarVillaIndicator">
-                        📅 Mostrando disponibilidad de: <strong>Villa #1</strong>
-                    </div>
-                    <div id="calendar" class="calendar-grid"></div>
-                    <div class="calendar-legend">
-                        <div class="legend-item">
-                            <div class="legend-box available"></div>
-                            <span>Disponible</span>
+            <!-- VILLA GALLERY & CALENDAR ROW -->
+            <div class="row g-4">
+                <!-- COLUMNA IZQUIERDA: GALERIA Y CALENDARIO -->
+                <div class="col-lg-7">
+                    <div class="bg-white rounded-4 p-4 shadow-lg text-dark mb-4">
+                        <h3 class="h5 text-primary fw-bold mb-3">🏝️ Conoce Nuestras Villas</h3>
+                        <div class="villa-selector d-flex flex-wrap gap-2 justify-content-center mb-4">
+                            <button class="btn btn-outline-primary villa-number-btn active" data-villa="1A">1</button>
+                            <button class="btn btn-outline-primary villa-number-btn" data-villa="2B">2</button>
+                            <button class="btn btn-outline-primary villa-number-btn" data-villa="3D">3</button>
+                            <button class="btn btn-outline-primary villa-number-btn" data-villa="4E">4</button>
+                            <button class="btn btn-outline-primary villa-number-btn" data-villa="5F">5</button>
+                            <button class="btn btn-outline-primary villa-number-btn" data-villa="6G">6</button>
                         </div>
-                        <div class="legend-item">
-                            <div class="legend-box reserved"></div>
-                            <span>Reservado</span>
+
+                        <div class="villa-display row g-4 align-items-center">
+                            <div class="col-md-6 order-md-2">
+                                <div class="position-relative rounded-3 overflow-hidden shadow-sm"
+                                    style="height: 250px;">
+                                    <button
+                                        class="btn btn-light rounded-circle position-absolute top-50 start-0 translate-middle-y ms-2 z-1"
+                                        id="prevImage">‹</button>
+                                    <img id="villaMainImage" src="../images/sala.jpg"
+                                        class="w-100 h-100 object-fit-cover" alt="Interior de Villa">
+                                    <button
+                                        class="btn btn-light rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 z-1"
+                                        id="nextImage">›</button>
+                                    <span
+                                        class="badge bg-dark position-absolute bottom-0 start-50 translate-middle-x mb-2"
+                                        id="imageIndicator">1 / 3</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 order-md-1">
+                                <h4 id="villaTitle" class="fw-bold text-primary">Villa #1</h4>
+                                <p class="small text-muted mb-3">Disfruta de una estadía única en nuestras villas
+                                    completamente equipadas</p>
+                                <ul class="list-unstyled small text-secondary">
+                                    <li class="mb-1"><i class="bi bi-tv me-2"></i>Televisión moderna</li>
+                                    <li class="mb-1"><i class="bi bi-egg-fried me-2"></i>Cocina completa</li>
+                                    <li class="mb-1"><i class="bi bi-tree me-2"></i>Terraza privada</li>
+                                    <li class="mb-1"><i class="bi bi-snow me-2"></i>Aire acondicionado</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="legend-item">
-                            <div class="legend-box selected"></div>
-                            <span>Seleccionado</span>
+                    </div>
+
+                    <!-- CALENDAR -->
+                    <div class="bg-white rounded-4 p-4 shadow-lg text-dark">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button id="prevMonth" class="btn btn-outline-primary btn-sm rounded-circle"><i
+                                    class="bi bi-chevron-left"></i></button>
+                            <h4 id="monthYear" class="mb-0 fw-bold"></h4>
+                            <button id="nextMonth" class="btn btn-outline-primary btn-sm rounded-circle"><i
+                                    class="bi bi-chevron-right"></i></button>
+                        </div>
+                        <div class="alert alert-info py-2 small mb-3">
+                            📅 Mostrando disponibilidad: <strong>Villa #1</strong>
+                        </div>
+                        <div id="calendar" class="calendar-grid-bootstrap"></div>
+                        <div class="d-flex gap-3 justify-content-center mt-3 small">
+                            <div class="d-flex align-items-center"><span
+                                    class="d-inline-block bg-success border border-success me-1"
+                                    style="width:12px;height:12px;"></span> Disponible</div>
+                            <div class="d-flex align-items-center"><span
+                                    class="d-inline-block bg-warning border border-warning me-1"
+                                    style="width:12px;height:12px;"></span> Reservado</div>
+                            <div class="d-flex align-items-center"><span
+                                    class="d-inline-block bg-primary border border-primary me-1"
+                                    style="width:12px;height:12px;"></span> Seleccionado</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- FORMULARIO DE RESERVA -->
-                <div class="booking-section">
-                    <form id="reservationForm" class="reservation-form">
-                        <h3>Detalles de tu Reserva</h3>
-
-                        <div class="form-group">
-                            <label for="guestName">Nombre Completo *</label>
-                            <input type="text" id="guestName" required placeholder="Nombre del huésped principal">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="guestEmail">Correo Electrónico *</label>
-                            <input type="email" id="guestEmail" required placeholder="tu@email.com">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="villaSelect">Selecciona tu Villa *</label>
-                            <select id="villaSelect" required>
-                                <option value="">-- Elige una villa --</option>
-                                <option value="1">Villa #1</option>
-                                <option value="2">Villa #2</option>
-                                <option value="3">Villa #3</option>
-                                <option value="4">Villa #4</option>
-                                <option value="5">Villa #5</option>
-                                <option value="6">Villa #6</option>
-                            </select>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="checkIn">Check-in *</label>
-                                <input type="text" id="checkIn" readonly placeholder="Selecciona en el calendario">
+                <!-- COLUMNA DERECHA: FORMULARIO -->
+                <div class="col-lg-5">
+                    <div class="bg-white rounded-4 p-4 shadow-lg text-dark h-100">
+                        <h3 class="h4 fw-bold mb-4">Detalles de tu Reserva</h3>
+                        <form id="reservationForm">
+                            <div class="mb-3">
+                                <label for="guestName" class="form-label fw-bold small">Nombre Completo</label>
+                                <input type="text" class="form-control" id="guestName" required
+                                    placeholder="Nombre del huésped principal">
+                            </div>
+                            <div class="mb-3">
+                                <label for="guestEmail" class="form-label fw-bold small">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="guestEmail" required
+                                    placeholder="tu@email.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="villaSelect" class="form-label fw-bold small">Selecciona tu Villa</label>
+                                <select id="villaSelect" class="form-select" required>
+                                    <option value="">-- Elige una villa --</option>
+                                    <option value="1">Villa #1</option>
+                                    <option value="2">Villa #2</option>
+                                    <option value="3">Villa #3</option>
+                                    <option value="4">Villa #4</option>
+                                    <option value="5">Villa #5</option>
+                                    <option value="6">Villa #6</option>
+                                </select>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label for="checkIn" class="form-label fw-bold small">Check-in</label>
+                                    <input type="text" class="form-control bg-light" id="checkIn" readonly
+                                        placeholder="--/--/--">
+                                </div>
+                                <div class="col-6">
+                                    <label for="checkOut" class="form-label fw-bold small">Check-out</label>
+                                    <input type="text" class="form-control bg-light" id="checkOut" readonly
+                                        placeholder="--/--/--">
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="numGuests" class="form-label fw-bold small">Huéspedes</label>
+                                <input type="number" class="form-control" id="numGuests" min="1" max="4" value="2"
+                                    required>
                             </div>
 
-                            <div class="form-group">
-                                <label for="checkOut">Check-out *</label>
-                                <input type="text" id="checkOut" readonly placeholder="Selecciona en el calendario">
+                            <div class="bg-light p-3 rounded-3 mb-4">
+                                <h6 class="fw-bold mb-3 border-bottom pb-2">Resumen de Precio</h6>
+                                <div class="d-flex justify-content-between mb-1 small">
+                                    <span>Noches:</span>
+                                    <strong id="numNights">0</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2 small">
+                                    <span>Precio/noche:</span>
+                                    <strong>$45.00</strong>
+                                </div>
+                                <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
+                                    <span>Total:</span>
+                                    <span id="totalPrice">$0.00</span>
+                                </div>
                             </div>
+
+                            <button type="submit"
+                                class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow">Continuar al
+                                Pago</button>
+                        </form>
+                        <hr class="my-4">
+                        <div class="text-center small text-muted">
+                            <p class="mb-1"><i class="bi bi-telephone-fill me-1"></i> 809-223-3901</p>
+                            <p class="mb-0"><i class="bi bi-envelope-fill me-1"></i> villasmaribellard@gmail.com</p>
                         </div>
-
-                        <div class="form-group">
-                            <label for="villaSelect">Selecciona tu Villa *</label>
-                            <select id="villaSelect" required>
-                                <option value="">-- Elige una villa --</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </div>
-
-                        <!-- RESUMEN DE PRECIO -->
-                        <div class="price-summary">
-                            <h4>Resumen de Precio</h4>
-                            <div id="priceBreakdown">
-                                <p class="text-muted">Selecciona las fechas de check-in y check-out</p>
-                            </div>
-                            <div class="price-info">
-                                <span>Noches: <strong id="numNights">0</strong></span>
-                                <span>Precio/noche: <strong>$45.00</strong></span>
-                            </div>
-                            <div class="total-price">
-                                <span>Total a Pagar:</span>
-                                <span id="totalPrice">$0.00</span>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="submit-button">Continuar al Pago</button>
-                    </form>
-
-                    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
-                        📞 ¿Preguntas? Llama al 809-223-3901
-                    </p>
-                    <p style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
-                        Correo: villasmaribellard@gmail.com
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="hero-overlay" style="z-index: 1;"></div>
     </section>
 
     <!-- MODAL DE PAGO -->
@@ -319,12 +404,15 @@
             <a href="https://instagram.com/villasmaribella" target="_blank">📷 Instagram</a>
             <a href="https://facebook.com/villasmaribella" target="_blank">📘 Facebook</a>
         </div>
-        <p>&copy; 2024 Villas Maribella - Cabarete, Puerto Plata, República Dominicana</p>
+        <p>&copy; 2026 Villas Maribella - Cabarete, Puerto Plata, República Dominicana</p>
         <p style="margin-top: 0.5rem; font-size: 0.9rem;">Beach Lodge | Windsurf & Kitesurf Paradise</p>
     </footer>
 
     <!-- JavaScript para Hero Slideshow -->
-    <script src="mobile-menu.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Scripts -->
+    <!-- mobile-menu.js removed as Bootstrap handles it -->
     <script type="module" src="reservations.js"></script>
 </body>
 

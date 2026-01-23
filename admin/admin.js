@@ -71,6 +71,19 @@ function initializeEventListeners() {
     if (calendarVillaFilter) {
         calendarVillaFilter.addEventListener('change', renderCalendar);
     }
+
+    // Bootstrap Tab Events
+    const tabEl = document.querySelector('button[data-bs-target="#calendar-panel"]');
+    if (tabEl) {
+        tabEl.addEventListener('shown.bs.tab', function (event) {
+            renderCalendar();
+        });
+    }
+
+    // Navigation buttons
+    document.getElementById('prevMonthAdmin')?.addEventListener('click', () => changeMonth(-1));
+    document.getElementById('nextMonthAdmin')?.addEventListener('click', () => changeMonth(1));
+    document.getElementById('logoutBtn')?.addEventListener('click', logout);
 }
 
 function initializeApp() {
@@ -429,38 +442,15 @@ function saveBlockedDates(blockedDates) {
 // ============================================
 // EXPOSE FUNCTIONS TO WINDOW
 // ============================================
-window.logout = logout;
-window.showAddReservation = showAddReservation;
-window.switchTab = switchTab;
-window.closeEditModal = closeEditModal;
-window.refreshData = refreshData;
-// Note: deleteReservation, unblockDates are handled via event delegation in DOMContentLoaded, 
-// so strictly speaking they don't need to be global if not called by onclick="...".
-// admin.html check: <button onclick="logout()">, <button onclick="switchTab(...)"> needed.
+// Cleanup: Removed manual window assignments in favor of event listeners
+// window.logout = logout; 
+// window.switchTab = switchTab; 
+// window.refreshData = refreshData;
+window.closeEditModal = closeEditModal; // Still used by close button in modal if onclick is present? Bootstrap handles this usually.
 
 // ============================================
-// TAB SWITCHING
+// TAB SWITCHING (Removed - handled by Bootstrap)
 // ============================================
-function switchTab(tabName) {
-    // Update tab buttons
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-
-    // Update tab content
-    document.getElementById('reservationsTab').classList.remove('active');
-    document.getElementById('calendarViewTab').classList.remove('active');
-    document.getElementById('calendarTab').classList.remove('active');
-
-    if (tabName === 'reservations') {
-        document.getElementById('reservationsTab').classList.add('active');
-    } else if (tabName === 'calendarView') {
-        document.getElementById('calendarViewTab').classList.add('active');
-        renderCalendar();
-    } else {
-        document.getElementById('calendarTab').classList.add('active');
-    }
-}
 
 function showAddReservation() {
     alert('Esta función permite agregar reservas manualmente. Por ahora, las reservas se crean desde la página principal.');
@@ -487,12 +477,9 @@ function getStatusText(status) {
     return statuses[status] || status;
 }
 
-// Close modal when clicking outside
-window.onclick = function (event) {
-    if (event.target.id === 'editModal') {
-        closeEditModal();
-    }
-}
+// Close modal when clicking outside (Bootstrap handles this, but keeping if needed for custom modals)
+// window.onclick = function (event) { ... } REMOVED
+
 // ============================================
 // CALENDAR VIEW FUNCTIONS
 // ============================================

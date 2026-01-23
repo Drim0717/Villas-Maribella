@@ -1,802 +1,161 @@
 /* ============================================
-   ADMIN PANEL STYLES - VILLAS MARIBELLA
+   ADMIN VARIABLES
    ============================================ */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    --tropical-blue: #00B4D8;
+    --deep-ocean: #0077B6;
+    --dark-text: #2B2D42;
+    --light-gray: #F8F9FA;
+    --bs-primary: #00B4D8;
+    /* Override Bootstrap Primary */
 }
 
+/* ============================================
+   GLOBAL & BOOTSTRAP OVERRIDES
+   ============================================ */
 body {
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    font-size: 16px;
-    /* Base size */
+    color: var(--dark-text);
+    background-color: var(--light-gray);
+    font-size: 14px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Playfair Display', serif;
+}
+
+.text-primary {
+    color: var(--tropical-blue) !important;
+}
+
+.bg-primary {
+    background-color: var(--tropical-blue) !important;
+}
+
+.btn-primary {
+    background-color: var(--tropical-blue);
+    border-color: var(--tropical-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--deep-ocean);
+    border-color: var(--deep-ocean);
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
 }
 
 /* ============================================
    LOGIN SCREEN
    ============================================ */
-.login-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.login-container {
     min-height: 100vh;
-    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 180, 216, 0.1) 0%, rgba(0, 119, 182, 0.1) 100%);
 }
 
-.login-box {
-    background: white;
-    padding: 3rem;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
+.login-card {
     width: 100%;
-    text-align: center;
-}
-
-.login-box h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: #00B4D8;
+    max-width: 400px;
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 .logo-image {
-    height: 80px;
-    width: auto;
-    object-fit: contain;
-}
-
-.logo-image-admin {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
-    vertical-align: middle;
-    margin-right: 10px;
-}
-
-.login-box h2 {
-    font-size: 1.5rem;
-    color: #2B2D42;
-    margin-bottom: 2rem;
-}
-
-.login-box .form-group {
-    margin-bottom: 1.5rem;
-    text-align: left;
-}
-
-.login-box label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2B2D42;
-    font-weight: 500;
-}
-
-.login-box input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.login-btn {
-    width: 100%;
-    padding: 1rem;
-    background: #00B4D8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.login-btn:hover {
-    background: #0077B6;
-    transform: translateY(-2px);
-}
-
-.hint {
-    margin-top: 1rem;
-    color: #999;
-    font-size: 0.9rem;
+    width: 100px;
+    margin-bottom: 1rem;
 }
 
 /* ============================================
-   ADMIN DASHBOARD
+   DASHBOARD TABS
    ============================================ */
-.admin-dashboard {
-    min-height: 100vh;
-    background: #f5f5f5;
-}
-
-/* HEADER */
-.admin-header {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.admin-header h1 {
-    color: #2B2D42;
-    font-size: 1.5rem;
-}
-
-.header-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.refresh-btn,
-.logout-btn {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.refresh-btn {
-    background: #00B4D8;
-    color: white;
-}
-
-.refresh-btn:hover {
-    background: #0077B6;
-}
-
-.logout-btn {
-    background: #dc3545;
-    color: white;
-}
-
-.logout-btn:hover {
-    background: #c82333;
-}
-
-/* STATISTICS */
-.stats-section {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-    display: grid;
-    padding: 0 2rem;
-    display: grid;
-    /* Responsive Grid for Stats */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.stat-icon {
-    font-size: 3rem;
-}
-
-.stat-content h3 {
-    font-size: 2rem;
-    color: #00B4D8;
-    margin-bottom: 0.25rem;
-}
-
-.stat-content p {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-/* TABS */
-.tabs {
-    max-width: 1400px;
-    margin: 2rem auto 0;
-    padding: 0 2rem;
-    display: flex;
-    gap: 1rem;
-}
-
-.tab-btn {
-    padding: 1rem 2rem;
-    background: white;
-    border: none;
-    border-radius: 10px 10px 0 0;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.tab-btn.active {
-    background: white;
-    color: #00B4D8;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tab-btn:hover {
-    color: #00B4D8;
-}
-
-/* TAB CONTENT */
-.tab-content {
-    display: none;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.section-header h2 {
-    color: #2B2D42;
-}
-
-.add-btn {
-    padding: 0.75rem 1.5rem;
-    background: #00B4D8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.add-btn:hover {
-    background: #0077B6;
-}
-
-.filter-controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.month-filter {
-    padding: 0.75rem 1.5rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
+.nav-pills .nav-link {
+    color: var(--dark-text);
     font-weight: 500;
-    color: #2B2D42;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
 }
 
-.month-filter:hover {
-    border-color: #00B4D8;
-}
-
-.month-filter:focus {
-    outline: none;
-    border-color: #00B4D8;
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
-}
-
-/* TABLE */
-.table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    /* Smooth scroll on mobile */
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-thead {
-    background: #f8f9fa;
-}
-
-th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #2B2D42;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-td {
-    padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    color: #444;
-}
-
-tbody tr:hover {
-    background: #f8f9fa;
-}
-
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.status-badge.confirmed {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-badge.cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.edit-btn-small,
-.delete-btn-small {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.edit-btn-small {
-    background: #ffc107;
-}
-
-.edit-btn-small:hover {
-    background: #e0a800;
-}
-
-.delete-btn-small {
-    background: #dc3545;
-}
-
-.delete-btn-small:hover {
-    background: #c82333;
-}
-
-/* CALENDAR BLOCKING */
-.calendar-blocking {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.block-form h3,
-.blocked-dates-list h3 {
-    margin-bottom: 1.5rem;
-    color: #2B2D42;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2B2D42;
-    font-weight: 500;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.block-btn {
-    width: 100%;
-    padding: 1rem;
-    background: #dc3545;
+.nav-pills .nav-link.active {
+    background-color: var(--tropical-blue);
     color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
 }
 
-.block-btn:hover {
-    background: #c82333;
-}
-
-.blocked-date-item {
-    background: #fff3cd;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.blocked-date-info strong {
-    display: block;
-    color: #856404;
-    margin-bottom: 0.25rem;
-}
-
-.blocked-date-info p {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.unblock-btn {
-    padding: 0.5rem 1rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.unblock-btn:hover {
-    background: #218838;
-}
-
-.no-data {
-    text-align: center;
-    color: #999;
-    padding: 2rem;
-}
-
-/* MODAL */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-dialog {
-    background: white;
-    border-radius: 20px;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content {
-    padding: 2.5rem;
-}
-
-.modal-content h3 {
-    color: #2B2D42;
-    margin-bottom: 1.5rem;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-
-.save-btn {
-    flex: 1;
-    padding: 1rem;
-    background: #00B4D8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.save-btn:hover {
-    background: #0077B6;
-}
-
-.cancel-btn {
-    flex: 1;
-    padding: 1rem;
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.cancel-btn:hover {
-    background: #5a6268;
-}
-
-/* CALENDAR VIEW */
-.calendar-container {
-    background: #f8f9fa;
-    padding: 2rem;
-    border-radius: 15px;
-}
-
-.calendar-navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 10px;
-}
-
-.calendar-navigation h3 {
-    color: #2B2D42;
-    font-size: 1.5rem;
-}
-
-.nav-btn {
-    padding: 0.75rem 1.5rem;
-    background: #00B4D8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.nav-btn:hover {
-    background: #0077B6;
-    transform: translateX(5px);
-}
-
-.calendar-grid {
+/* ============================================
+   CALENDAR
+   ============================================ */
+.calendar-grid-bootstrap {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-bottom: 2rem;
-}
-
-.calendar-day-header {
-    background: #2B2D42;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    font-weight: 600;
-    border-radius: 8px;
+    gap: 4px;
 }
 
 .calendar-day {
-    background: white;
-    min-height: 100px;
-    padding: 0.75rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: default;
+    background-color: #f8f9fa;
+    position: relative;
+    border: 1px solid #eee;
 }
 
-.calendar-day.empty {
-    background: transparent;
-    box-shadow: none;
-}
-
-.calendar-day:not(.empty):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.calendar-day .day-number {
-    font-weight: 600;
-    color: #2B2D42;
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-}
-
-.calendar-day.available {
-    background: #d4edda;
-    border: 2px solid #28a745;
+.calendar-day:hover {
+    background-color: #e9ecef;
 }
 
 .calendar-day.occupied {
-    background: #fff3cd;
-    border: 2px solid #ffc107;
+    background-color: #ffe6e6;
+    color: #cc0000;
+    font-weight: bold;
+    font-size: 0.75rem;
+    border-color: #ffcccc;
 }
 
 .calendar-day.blocked {
-    background: #f8d7da;
-    border: 2px solid #dc3545;
+    background-color: #e2e3e5;
+    color: #6c757d;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255, 255, 255, .5) 5px, rgba(255, 255, 255, .5) 10px);
 }
 
-.calendar-day .day-info {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: 0.5rem;
+.calendar-day.past {
+    opacity: 0.5;
 }
 
-.guest-name {
-    background: rgba(0, 180, 216, 0.2);
-    padding: 0.25rem 0.5rem;
-    border-radius: 5px;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
-    color: #0077B6;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.75rem;
+    color: var(--dark-text);
+    padding-bottom: 0.25rem;
 }
 
-.calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 10px;
+/* ============================================
+   TABLES
+   ============================================ */
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-}
-
-.legend-color {
-    width: 30px;
-    height: 20px;
-    border-radius: 5px;
-}
-
-.legend-color.available {
-    background: #d4edda;
-    border: 2px solid #28a745;
-}
-
-.legend-color.occupied {
-    background: #fff3cd;
-    border: 2px solid #ffc107;
-}
-
-.legend-color.blocked {
-    background: #f8d7da;
-    border: 2px solid #dc3545;
-}
-
-/* STATUS SELECT */
-.status-select,
-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.status-select:hover,
-select:hover {
-    border-color: #00B4D8;
-}
-
-.status-select:focus,
-select:focus {
-    outline: none;
-    border-color: #00B4D8;
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .stats-section {
-        grid-template-columns: 1fr;
-    }
-
-    .calendar-blocking {
-        grid-template-columns: 1fr;
-    }
-
-    .tabs {
-        flex-direction: column;
-    }
-
-    .table-container {
-        font-size: 0.85rem;
-    }
-
-    .calendar-grid {
-        gap: 5px;
-    }
-
-    .calendar-day {
-        min-height: 80px;
-        padding: 0.5rem;
-    }
-
-    .calendar-day .day-number {
-        font-size: 0.9rem;
-    }
-
-    .guest-name {
-        font-size: 0.7rem;
-    }
-
-    .calendar-legend {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .admin-header {
-        padding: 1rem;
-    }
-
-    .tab-btn {
-        width: 100%;
-        text-align: center;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-    }
-
-    .tabs {
-        flex-direction: column;
-        padding: 0 1rem;
-    }
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 180, 216, 0.05);
 }

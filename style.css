@@ -16,6 +16,245 @@
     --white: #FFFFFF;
     --light-gray: #F8F9FA;
     --dark-text: #2B2D42;
+    --bs-primary: #00B4D8;
+    /* Override Bootstrap Primary */
+    --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
+}
+
+/* ============================================
+   GLOBAL & BOOTSTRAP OVERRIDES
+   ============================================ */
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--dark-text);
+    background-color: var(--light-gray);
+}
+
+h1,
+h2,
+h3,
+h4,
+.display-3,
+.display-5 {
+    font-family: 'Playfair Display', serif;
+}
+
+.text-primary {
+    color: var(--tropical-blue) !important;
+}
+
+.bg-primary {
+    background-color: var(--tropical-blue) !important;
+}
+
+.btn-primary {
+    background-color: var(--tropical-blue);
+    border-color: var(--tropical-blue);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--deep-ocean);
+    border-color: var(--deep-ocean);
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    color: var(--tropical-blue);
+    border-color: var(--tropical-blue);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary.active {
+    background-color: var(--tropical-blue);
+    border-color: var(--tropical-blue);
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.navbar {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.logo {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 1.8rem;
+}
+
+.logo-image {
+    height: 60px;
+    width: auto;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: var(--dark-text) !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--tropical-blue) !important;
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero {
+    background: url('images/villa_hero.jpg') no-repeat center center/cover;
+    background-attachment: fixed;
+    margin-top: -80px;
+    /* Counteract navbar height */
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 180, 216, 0.4) 0%, rgba(0, 119, 182, 0.6) 100%);
+    z-index: 1;
+}
+
+.z-index-2 {
+    z-index: 2;
+}
+
+.hero-content {
+    animation: fadeInUp 1s ease;
+}
+
+/* ============================================
+   CARDS & HOVER EFFECTS
+   ============================================ */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+    /* Bootstrap shadow-lg equiv */
+}
+
+/* ============================================
+   GALLERY
+   ============================================ */
+.gallery-item img {
+    transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   CONTACT & CALENDAR
+   ============================================ */
+.contact-section {
+    background: linear-gradient(to bottom, var(--deep-ocean), var(--tropical-blue));
+}
+
+.villa-number-btn {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Custom Calendar Grid within Bootstrap structure */
+.calendar-grid-bootstrap {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: default;
+    background-color: #f8f9fa;
+    transition: all 0.2s;
+}
+
+.calendar-day.empty {
+    background: transparent;
+}
+
+.calendar-day.available {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    cursor: pointer;
+}
+
+.calendar-day.available:hover {
+    background-color: #badbcc;
+}
+
+.calendar-day.reserved {
+    background-color: #fff3cd;
+    color: #856404;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.calendar-day.selected {
+    background-color: var(--tropical-blue) !important;
+    color: white !important;
+}
+
+.calendar-day.in-range {
+    background-color: rgba(0, 180, 216, 0.3);
+}
+
+.calendar-day.past {
+    background-color: #e9ecef;
+    color: #adb5bd;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: var(--dark-text);
+    padding-bottom: 0.5rem;
+}
+
+/* ============================================
+   ANIMATION
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+:root {
+    --deep-ocean: #0077B6;
+    --turquoise: #48CAE4;
+    --sand-beige: #F4E4C1;
+    --coral-accent: #FF6B6B;
+    --palm-green: #2D6A4F;
+    --white: #FFFFFF;
+    --light-gray: #F8F9FA;
+    --dark-text: #2B2D42;
     --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
     --gradient-hero: linear-gradient(135deg, rgba(0, 180, 216, 0.9) 0%, rgba(0, 119, 182, 0.8) 100%);
 
