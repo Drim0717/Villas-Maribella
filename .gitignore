@@ -1,12 +1,8 @@
-# System files
-Thumbs.db
-Desktop.ini
+node_modules/
+.env
+.env.local
 .DS_Store
-
-# Logs
-*.log
-
-# Editor directories
-.vscode/
-.idea/
-*.swp
+dist/
+build/
+server/node_modules/
+server/.env
