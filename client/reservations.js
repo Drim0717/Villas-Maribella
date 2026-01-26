@@ -120,9 +120,9 @@ function renderCalendar() {
 }
 
 // Verificar si una fecha está reservada para una villa específica
-function isReserved(date, villaNumber) {
+function isReserved(date, villaId) {
     // Si no se especifica villa, usar la villa actualmente seleccionada
-    const checkVilla = villaNumber || currentVillaNumber;
+    const checkVilla = villaId || currentVillaId;
     // Format checking date to YYYY-MM-DD to match storage format and avoid timezone issues
     const dateStr = formatDate(date);
 
@@ -139,8 +139,9 @@ function isReserved(date, villaNumber) {
     // Uses the global dbReservations array which is loaded asynchronously
     const isSavedReserved = dbReservations.some(reservation => {
         // reservation.checkIn is already "YYYY-MM-DD" string
-        // Note: Legacy data might have string '1' or number 1, so use ==
-        const matchesVilla = reservation.villaNumber == checkVilla;
+        // Note: Logic handles both alphanumeric IDs like "1A" and legacy numbers
+        const matchesVilla = reservation.villaNumber == checkVilla ||
+            (reservation.villaNumber == parseInt(checkVilla) && checkVilla.length === 1);
         // Compare strings: "2026-01-19" (date) >= "2026-01-19" (checkIn) -> True
         // AND "2026-01-19" (date) < "2026-01-21" (checkOut) -> True
         return matchesVilla && dateStr >= reservation.checkIn && dateStr < reservation.checkOut;
@@ -553,6 +554,7 @@ const villaImages = {
 
 let currentVillaImageIndex = 0;
 let currentVillaNumber = 1;
+let currentVillaId = '1A';
 
 // Initialize villa gallery
 document.addEventListener('DOMContentLoaded', function () {
@@ -560,8 +562,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     villaButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const villaNumber = parseInt(this.getAttribute('data-villa'));
-            selectVilla(villaNumber);
+            const villaId = this.getAttribute('data-villa');
+            selectVilla(villaId);
         });
     });
 
@@ -581,49 +583,51 @@ document.addEventListener('DOMContentLoaded', function () {
     const villaSelect = document.getElementById('villaSelect');
     if (villaSelect) {
         villaSelect.addEventListener('change', function () {
-            const selectedVilla = parseInt(this.value);
-            if (selectedVilla) {
-                selectVilla(selectedVilla);
+            const selectedVillaId = this.value;
+            if (selectedVillaId) {
+                selectVilla(selectedVillaId);
             }
         });
     }
 
     // Initialize the first villa display
-    updateVillaImage(currentVillaNumber, 0);
-    updateImageIndicator();
+    selectVilla('1A'); // Use the first villa code
 });
 
 // Select villa and update display
-function selectVilla(villaNumber) {
-    currentVillaNumber = villaNumber;
+function selectVilla(villaId) {
+    if (!villaId) return;
+    currentVillaId = villaId;
+    currentVillaNumber = parseInt(villaId); // For images mapping
     currentVillaImageIndex = 0;
 
     // Update active button
     const villaButtons = document.querySelectorAll('.villa-number-btn');
     villaButtons.forEach(btn => {
         btn.classList.remove('active');
-        if (parseInt(btn.getAttribute('data-villa')) === villaNumber) {
+        if (btn.getAttribute('data-villa') === villaId) {
             btn.classList.add('active');
         }
     });
 
     // Update villa title
-    document.getElementById('villaTitle').textContent = `Villa #${villaNumber}`;
+    const villaTitle = document.getElementById('villaTitle');
+    if (villaTitle) villaTitle.textContent = `Villa #${villaId}`;
 
     // Update villa image
-    updateVillaImage(villaNumber, 0);
+    updateVillaImage(currentVillaNumber, 0);
     updateImageIndicator();
 
     // Update villa selector in reservation form
     const villaSelect = document.getElementById('villaSelect');
     if (villaSelect) {
-        villaSelect.value = villaNumber.toString();
+        villaSelect.value = villaId;
     }
 
     // Actualizar indicador del calendario
     const calendarIndicator = document.getElementById('calendarVillaIndicator');
     if (calendarIndicator) {
-        calendarIndicator.innerHTML = `📅 Mostrando disponibilidad de: <strong>Villa #${villaNumber}</strong>`;
+        calendarIndicator.innerHTML = `Villa #${villaId}`;
     }
 
     // IMPORTANTE: Recargar el calendario para mostrar disponibilidad de esta villa
