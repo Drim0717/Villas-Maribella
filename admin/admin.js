@@ -8,8 +8,8 @@ import { collection, onSnapshot, deleteDoc, doc, updateDoc } from "https://www.g
 const ADMIN_PASSWORD = 'Maribella';
 const PRICE_PER_NIGHT = 45;
 
-let allReservations = []; // Global state for reservations
-let allBlockedDates = []; // Global state for blocked dates
+let allReservations = [];
+let allBlockedDates = [];
 let currentCalendarMonth = new Date().getMonth();
 let currentCalendarYear = new Date().getFullYear();
 
@@ -158,9 +158,30 @@ function logout() {
 // DATA LOADING
 // ============================================
 function loadDashboardData() {
-    loadReservationsTable(); // Renamed to avoid confusion
+    populateMonthFilter();
+    loadReservationsTable();
     loadBlockedDates();
     updateStatistics();
+}
+
+function populateMonthFilter() {
+    const monthFilter = document.getElementById('monthFilter');
+    if (!monthFilter || monthFilter.options.length > 1) return; // Ya está lleno
+
+    const months = [
+        { val: '2025-11', label: 'Noviembre 2025' },
+        { val: '2025-12', label: 'Diciembre 2025' },
+        { val: '2026-01', label: 'Enero 2026' },
+        { val: '2026-02', label: 'Febrero 2026' },
+        { val: '2026-03', label: 'Marzo 2026' }
+    ];
+
+    months.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.val;
+        opt.textContent = m.label;
+        monthFilter.appendChild(opt);
+    });
 }
 
 function refreshData() {
@@ -170,7 +191,7 @@ function refreshData() {
 }
 
 function loadReservationsTable() {
-    let reservations = [...allReservations]; // Copy from global state
+    let reservations = [...allReservations];
 
     // Cargar reservas locales (Backup)
     const localReservations = JSON.parse(localStorage.getItem('villasReservationsBackup') || '[]');
@@ -190,9 +211,10 @@ function loadReservationsTable() {
     // Aplicar filtro por mes si está seleccionado
     // Aplicar filtro por mes si está seleccionado
     const monthFilter = document.getElementById('monthFilter');
-    if (monthFilter && monthFilter.value) {
+    if (monthFilter && monthFilter.value && monthFilter.value !== 'all') {
         const selectedMonth = monthFilter.value; // formato: "2026-01"
         reservations = reservations.filter(reservation => {
+            if (!reservation.checkIn) return false;
             const checkInMonth = reservation.checkIn.substring(0, 7);
             return checkInMonth === selectedMonth;
         });
@@ -200,8 +222,12 @@ function loadReservationsTable() {
 
     // Filtro para ocultar reservas pasadas (default: ocultas)
     const showPastCheckbox = document.getElementById('showPastReservations');
-    // Si el checkbox NO está marcado, filtramos las pasadas (checkOut < hoy)
-    if (showPastCheckbox && !showPastCheckbox.checked) {
+    const isMonthFilterActive = monthFilter && monthFilter.value && monthFilter.value !== 'all';
+
+    // Solo ocultamos pasadas si: 
+    // 1. El checkbox NO está marcado
+    // 2. NO hay un filtro de mes específico seleccionado (si el usuario busca un mes, quiere ver todo ese mes)
+    if (showPastCheckbox && !showPastCheckbox.checked && !isMonthFilterActive) {
         const todayStr = new Date().toISOString().split('T')[0];
         reservations = reservations.filter(reservation => reservation.checkOut >= todayStr);
     }
@@ -217,43 +243,33 @@ function loadReservationsTable() {
     reservations.forEach(reservation => {
         const checkIn = new Date(reservation.checkIn);
         const checkOut = new Date(reservation.checkOut);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
         const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
         const villaNumber = reservation.villaNumber || 'N/A';
-
-        // Calculate remaining days until check-in
-        const daysUntilCheckIn = Math.ceil((checkIn - today) / (1000 * 60 * 60 * 24));
-        let remainingDaysText = '';
-        if (daysUntilCheckIn > 0) {
-            remainingDaysText = `<span style="color: #0077B6; font-weight: 600;">${daysUntilCheckIn}/${nights} días</span>`;
-        } else if (daysUntilCheckIn === 0) {
-            remainingDaysText = '<span style="color: #28a745; font-weight: 600;">Hoy</span>';
-        } else if (checkOut > today) {
-            remainingDaysText = '<span style="color: #ffc107; font-weight: 600;">En curso</span>';
-        } else {
-            remainingDaysText = '<span style="color: #999;">Completada</span>';
-        }
+        const totalAmount = typeof reservation.total === 'number' ? reservation.total : 0;
+        const numGuests = reservation.numGuests || 1;
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${reservation.id}</td>
+            <td><small class="text-muted fw-bold">${reservation.id}</small></td>
             <td><strong>Villa #${villaNumber}</strong></td>
-            <td>${reservation.guestName}</td>
-            <td>${reservation.guestEmail}</td>
+            <td>${reservation.guestName || 'Sin Nombre'}</td>
+            <td><small>${reservation.guestEmail || ''}</small></td>
             <td>${formatDate(reservation.checkIn)}</td>
             <td>${formatDate(reservation.checkOut)}</td>
             <td>${nights}</td>
-            <td>${remainingDaysText}</td>
-            <td>${reservation.numGuests}</td>
-            <td>$${reservation.total.toFixed(2)}</td>
+            <td>${numGuests}</td>
+            <td class="fw-bold">$${totalAmount.toFixed(2)}</td>
             <td>
-                <span class="status-badge ${reservation.status}">${getStatusText(reservation.status)}</span>
-                ${reservation.isLocal ? '<span style="font-size:0.8em; color:orange; display:block;">(Offline)</span>' : ''}
+                <span class="badge ${reservation.status === 'confirmed' ? 'bg-success' : (reservation.status === 'pending' ? 'bg-warning text-dark' : 'bg-secondary')}">
+                    ${getStatusText(reservation.status)}
+                </span>
+                ${reservation.isLocal ? '<div style="font-size:0.7em; color:orange;">(Offline)</div>' : ''}
             </td>
-            <td class="action-buttons">
-                <button class="edit-btn-small" data-reservation-id="${reservation.id}">✏️</button>
-                <button class="delete-btn-small" data-firestore-id="${reservation.firestoreId}">🗑️</button>
+            <td>
+                <div class="d-flex gap-1 justify-content-center">
+                    <button class="btn btn-outline-primary btn-sm" onclick="editReservation('${reservation.id}')" title="Editar"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="deleteReservation('${reservation.firestoreId}')" title="Eliminar"><i class="bi bi-trash"></i></button>
+                </div>
             </td>
         `;
         tbody.appendChild(row);
@@ -263,7 +279,7 @@ function loadReservationsTable() {
 function loadBlockedDates() {
     const blockedDates = getBlockedDates();
     const container = document.getElementById('blockedDatesList');
-    if (!container) return; // Guard clause
+    if (!container) return;
     container.innerHTML = '';
 
     if (blockedDates.length === 0) {

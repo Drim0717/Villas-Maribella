@@ -407,6 +407,21 @@ async function executePayment(method) {
 
         console.log("Guardado exitoso!");
 
+        // Intentar enviar correo (backend local)
+        fetch('http://localhost:3000/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                guestName,
+                guestEmail,
+                reservationId: confirmationCode,
+                checkIn: selectedCheckIn.toLocaleDateString('es-ES'),
+                checkOut: selectedCheckOut.toLocaleDateString('es-ES'),
+                total: total.toFixed(2),
+                villaNumber: selectedVilla
+            })
+        }).catch(err => console.log("Servidor de correos no detectado (Localhost:3000)"));
+
         // Mensaje personalizado según el estado
         const title = method === 'transfer' ? '¡Reserva Pendiente!' : '¡Reserva Confirmada!';
         const message = method === 'transfer'
