@@ -103,12 +103,10 @@ h4,
    HERO SECTION
    ============================================ */
 .hero {
-    background: url('images/villa_hero.jpg') no-repeat center center/cover;
+    background: url('images/villa_hero.jpg') no-repeat center center / cover;
     background-attachment: fixed;
-    /* Ensure height is handled by Bootstrap vh-100 class but keep min-height for safety */
     min-height: 100vh;
     position: relative;
-    /* Removed negative margin that might be pulling it too high */
 }
 
 .hero-overlay {
@@ -1483,4 +1481,28 @@ section {
     to {
         transform: scale(1);
     }
+}
+
+/* ============================================
+   Ajustes de Galería de Villas (PC & Mobile)
+   ============================================ */
+.villa-image-container {
+    height: 350px !important;
+    /* Más grande en PC */
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .villa-image-container {
+        height: 250px !important;
+        /* Tamaño cómodo en celular */
+    }
+}
+
+.villa-display img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.villa-display:hover img {
+    transform: scale(1.02);
 }
