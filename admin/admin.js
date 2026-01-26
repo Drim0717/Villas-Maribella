@@ -166,22 +166,15 @@ function loadDashboardData() {
 
 function populateMonthFilter() {
     const monthFilter = document.getElementById('monthFilter');
-    if (!monthFilter || monthFilter.options.length > 1) return; // Ya está lleno
+    if (!monthFilter) return;
 
-    const months = [
-        { val: '2025-11', label: 'Noviembre 2025' },
-        { val: '2025-12', label: 'Diciembre 2025' },
-        { val: '2026-01', label: 'Enero 2026' },
-        { val: '2026-02', label: 'Febrero 2026' },
-        { val: '2026-03', label: 'Marzo 2026' }
-    ];
-
-    months.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m.val;
-        opt.textContent = m.label;
-        monthFilter.appendChild(opt);
-    });
+    // Set default value to current month if empty
+    if (!monthFilter.value) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        monthFilter.value = `${year}-${month}`;
+    }
 }
 
 function refreshData() {
@@ -240,11 +233,23 @@ function loadReservationsTable() {
         return;
     }
 
+    // Mapeo de IDs viejos a nuevos para consistencia visual
+    const villaMapping = {
+        '1': '1A', '2': '2B', '3': '3D',
+        '4': '4E', '5': '5F', '6': '6G'
+    };
+
     reservations.forEach(reservation => {
         const checkIn = new Date(reservation.checkIn);
         const checkOut = new Date(reservation.checkOut);
         const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-        const villaNumber = reservation.villaNumber || 'N/A';
+
+        let villaNumber = reservation.villaNumber || 'N/A';
+        // Si el ID es viejo (solo número), lo convertimos al nuevo formato
+        if (villaMapping[villaNumber]) {
+            villaNumber = villaMapping[villaNumber];
+        }
+
         const totalAmount = typeof reservation.total === 'number' ? reservation.total : 0;
         const numGuests = reservation.numGuests || 1;
 
@@ -260,14 +265,19 @@ function loadReservationsTable() {
             <td>${numGuests}</td>
             <td class="fw-bold">$${totalAmount.toFixed(2)}</td>
             <td>
-                <span class="badge ${reservation.status === 'confirmed' ? 'bg-success' : (reservation.status === 'pending' ? 'bg-warning text-dark' : 'bg-secondary')}">
-                    ${getStatusText(reservation.status)}
-                </span>
+                <select class="form-select form-select-sm status-select ${reservation.status}" 
+                        onchange="quickUpdateStatus('${reservation.firestoreId}', this.value)"
+                        style="width: auto; font-size: 0.75rem; font-weight: 600;">
+                    <option value="pending" ${reservation.status === 'pending' ? 'selected' : ''}>Pendiente</option>
+                    <option value="confirmed" ${reservation.status === 'confirmed' ? 'selected' : ''}>Confirmada</option>
+                    <option value="completed" ${reservation.status === 'completed' ? 'selected' : ''}>Completada</option>
+                    <option value="cancelled" ${reservation.status === 'cancelled' ? 'selected' : ''}>Cancelada</option>
+                </select>
                 ${reservation.isLocal ? '<div style="font-size:0.7em; color:orange;">(Offline)</div>' : ''}
             </td>
             <td>
                 <div class="d-flex gap-1 justify-content-center">
-                    <button class="btn btn-outline-primary btn-sm" onclick="editReservation('${reservation.id}')" title="Editar"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-outline-primary btn-sm" onclick="editReservation('${reservation.id}')" title="Editar"><i class="bi bi-calendar-event"></i></button>
                     <button class="btn btn-outline-danger btn-sm" onclick="deleteReservation('${reservation.firestoreId}')" title="Eliminar"><i class="bi bi-trash"></i></button>
                 </div>
             </td>
@@ -318,9 +328,6 @@ function updateStatistics() {
 // ============================================
 // RESERVATION MANAGEMENT
 // ============================================
-// ============================================
-// RESERVATION MANAGEMENT
-// ============================================
 function editReservation(id) {
     const reservation = allReservations.find(r => r.id === id); // Find in global state
 
@@ -337,6 +344,17 @@ function editReservation(id) {
     document.getElementById('editModal').style.display = 'flex';
 }
 
+async function quickUpdateStatus(firestoreId, newStatus) {
+    if (!firestoreId) return;
+    try {
+        await updateDoc(doc(db, "reservations", firestoreId), { status: newStatus });
+        console.log("Estado actualizado a:", newStatus);
+    } catch (error) {
+        console.error("Error actualizando estado:", error);
+        alert("Error al actualizar el estado");
+    }
+}
+
 async function handleEditReservation(e) {
     e.preventDefault();
 
@@ -347,12 +365,10 @@ async function handleEditReservation(e) {
     const checkOut = document.getElementById('editCheckOut').value;
     const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
 
+    // Only updating dates and status as requested
     const updatedData = {
-        guestName: document.getElementById('editGuestName').value,
-        guestEmail: document.getElementById('editGuestEmail').value,
         checkIn: checkIn,
         checkOut: checkOut,
-        numGuests: parseInt(document.getElementById('editNumGuests').value),
         status: document.getElementById('editStatus').value,
         total: nights * PRICE_PER_NIGHT
     };
@@ -367,20 +383,28 @@ async function handleEditReservation(e) {
     }
 }
 
-function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
-}
-
 async function deleteReservation(firestoreId) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) return;
+    if (!firestoreId) return;
+    if (!confirm('¿Estás seguro de que deseas eliminar esta reserva? Esta acción no se puede deshacer.')) return;
 
     try {
         await deleteDoc(doc(db, "reservations", firestoreId));
-        alert('Reserva eliminada');
-        // Snapshot listener will auto-update the UI
+        console.log("Reserva eliminada satisfactoriamente");
+        // snapshot listener updates UI
     } catch (error) {
         console.error("Error removing document: ", error);
         alert("Error al eliminar la reserva");
+    }
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editModal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Limpiar el backdrop si Bootstrap lo creó
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) backdrop.remove();
+        document.body.classList.remove('modal-open');
     }
 }
 
@@ -575,4 +599,12 @@ function changeMonth(delta) {
     }
     renderCalendar();
 }
+// Export functions to global scope for HTML event handlers
+window.editReservation = editReservation;
+window.deleteReservation = deleteReservation;
+window.quickUpdateStatus = quickUpdateStatus;
+window.closeEditModal = closeEditModal;
+window.logout = logout;
 window.changeMonth = changeMonth;
+window.loadDashboardData = loadDashboardData;
+window.loadReservationsTable = loadReservationsTable;
