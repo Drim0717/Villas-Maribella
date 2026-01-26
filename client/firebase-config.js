@@ -3,8 +3,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-console.log("Firebase Config: Inicializando...");
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCBd-szJo67s4Z2kpGACoBXMtO5pYRNy7U",

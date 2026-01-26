@@ -33,27 +33,39 @@ app.post('/api/send-email', async (req, res) => {
             to: [guestEmail],
             subject: `Confirmación de Reserva #${reservationId} - Villas Maribella`,
             html: `
-                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                    <div style="background-color: #00B4D8; padding: 20px; text-align: center; color: white; border-radius: 8px 8px 0 0;">
-                        <h1>¡Reserva Confirmada!</h1>
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <div style="background-color: #00B4D8; padding: 30px; text-align: center; color: white;">
+                        <!-- ESPACIO PARA LOGO: Reemplazar URL cuando el sitio esté en vivo -->
+                        <img src="https://raw.githubusercontent.com/Drim0717/Villas-Maribella/main/images/Logo.png" alt="Villas Maribella" style="width: 150px; margin-bottom: 15px; filter: brightness(0) invert(1);">
+                        <h1 style="margin: 0; font-size: 24px; letter-spacing: 1px;">¡Reserva Confirmada!</h1>
                     </div>
-                    <div style="padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px;">
-                        <p>Hola <strong>${guestName}</strong>,</p>
-                        <p>Estamos encantados de confirmar tu estadía en <strong>Villas Maribella</strong>.</p>
+                    
+                    <div style="padding: 30px; background-color: #ffffff;">
+                        <p style="font-size: 16px;">Hola <strong>${guestName}</strong>,</p>
+                        <p style="line-height: 1.6;">Estamos encantados de confirmar tu estadía en <strong>Villas Maribella</strong>. Hemos preparado todo para que disfrutes de una experiencia inolvidable.</p>
                         
-                        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                            <h3 style="color: #0077B6; margin-top: 0;">Detalles de la Reserva</h3>
-                            <p><strong>Código:</strong> ${reservationId}</p>
-                            <p><strong>Villa:</strong> #${villaNumber}</p>
-                            <p><strong>Check-in:</strong> ${checkIn}</p>
-                            <p><strong>Check-out:</strong> ${checkOut}</p>
-                            <p><strong>Total:</strong> $${total}</p>
+                        <div style="background-color: #f0f9ff; padding: 20px; border-radius: 10px; border-left: 5px solid #0077B6; margin: 25px 0;">
+                            <h3 style="color: #0077B6; margin-top: 0; border-bottom: 1px solid #d0e7f9; padding-bottom: 10px;">Detalles de la Estadía</h3>
+                            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                                <tr><td style="padding: 5px 0;"><strong>Código:</strong></td><td>${reservationId}</td></tr>
+                                <tr><td style="padding: 5px 0;"><strong>Villa:</strong></td><td>#${villaNumber}</td></tr>
+                                <tr><td style="padding: 5px 0;"><strong>Check-in:</strong></td><td>${checkIn}</td></tr>
+                                <tr><td style="padding: 5px 0;"><strong>Check-out:</strong></td><td>${checkOut}</td></tr>
+                                <tr><td style="padding: 5px 0; color: #0077B6; font-size: 16px;"><strong>Total:</strong></td><td style="color: #0077B6; font-size: 16px;"><strong>$${total}</strong></td></tr>
+                            </table>
                         </div>
 
-                        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
-                        <p style="margin-top: 30px;">¡Te esperamos pronto!</p>
-                        <hr>
-                        <p style="font-size: 12px; color: #999;">Calle Principal #123, Cabarete, República Dominicana</p>
+                        <div style="text-align: center; margin-top: 30px;">
+                            <a href="https://maps.app.goo.gl/wWEZfYFCeQ6XYGtv7" style="background-color: #0077B6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📍 ¿Cómo llegar? Ver en Mapas</a>
+                        </div>
+
+                        <p style="margin-top: 30px; font-size: 14px; color: #666; line-height: 1.6;">Si necesitas ayuda adicional o tienes alguna petición especial, no dudes en responder a este correo.</p>
+                        <p style="margin-top: 20px; font-weight: bold;">¡Te esperamos pronto!</p>
+                    </div>
+
+                    <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+                        <p style="font-size: 12px; color: #999; margin: 0;">Villas Maribella - Cabarete, República Dominicana</p>
+                        <p style="font-size: 11px; color: #bbb; margin-top: 5px;">Calle Principal #123. <a href="https://maps.app.goo.gl/wWEZfYFCeQ6XYGtv7" style="color: #aaa; text-decoration: underline;">Ver Ubicación</a></p>
                     </div>
                 </div>
             `
