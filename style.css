@@ -1345,13 +1345,16 @@ section {
 
 
 .summary-box-premium {
-    background: linear-gradient(135deg, var(--deep-ocean) 0%, var(--tropical-blue) 100%);
-    padding: 1.5rem;
-    border-radius: 20px;
-    color: white;
-    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.25);
+    background: #0077B6 !important;
+    /* Fallback para navegadores antiguos */
+    background: linear-gradient(135deg, #0077B6 0%, #00B4D8 100%) !important;
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 25px rgba(0, 180, 216, 0.3) !important;
     position: relative;
     overflow: hidden;
+    display: block !important;
 }
 
 .summary-box-premium::after {
@@ -1367,12 +1370,11 @@ section {
 }
 
 .text-label-premium {
-    font-size: 0.9rem;
-    font-weight: 500;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #0077B6
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
 }
 
 .badge-nights-premium {
@@ -1386,19 +1388,17 @@ section {
 }
 
 .price-value-premium {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin: 0;
-    font-family: 'Playfair Display', serif;
-    letter-spacing: -1px;
-    color: #0077B6
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    font-family: 'Playfair Display', serif !important;
 }
 
 .price-detail-premium {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    font-weight: 500;
-    color: #0077B6
+    font-size: 0.9rem !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-weight: 500 !important;
 }
 
 
