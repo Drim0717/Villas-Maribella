@@ -67,14 +67,20 @@ function changeGuests(delta) {
 function updateGuestUI() {
     const guestCountDisplay = document.getElementById('guestCountDisplay');
     if (guestCountDisplay) {
-        guestCountDisplay.innerText = `${numGuests} ${numGuests === 1 ? 'Persona' : 'Personas'}`;
+        guestCountDisplay.innerText = numGuests;
     }
 }
 
 function updateCapacityLabel() {
     const label = document.getElementById('maxCapacityLabel');
+    const smallLabel = document.getElementById('maxCapacitySmall');
+    const max = VILLA_CONFIG[currentVillaId].maxGuests;
+
     if (label) {
-        label.innerText = `Capacidad máxima para Villa #${currentVillaId}: ${VILLA_CONFIG[currentVillaId].maxGuests} personas`;
+        label.innerText = `Huéspedes máx. para Villa #${currentVillaId}: ${max}`;
+    }
+    if (smallLabel) {
+        smallLabel.innerText = max;
     }
 }
 
@@ -139,6 +145,9 @@ function renderCalendar() {
             if (isReserved(dayDate)) {
                 dayElement.classList.add('reserved');
             } else {
+                // Marcar como disponible para interacción
+                dayElement.classList.add('available');
+
                 // Marcar si está seleccionado
                 if (isSelected(dayDate)) {
                     dayElement.classList.add('selected');
