@@ -319,6 +319,7 @@ function showPaymentModal(guestName, total, nights, selectedVilla) {
     const modalContent = document.getElementById('modalContent');
 
     modalContent.innerHTML = `
+        <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
         <h3>Confirmar Reserva</h3>
         <div class="reservation-summary">
             <p><strong>Huésped:</strong> ${guestName}</p>
@@ -346,6 +347,7 @@ function showPaymentModal(guestName, total, nights, selectedVilla) {
     `;
 
     modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
 }
 
 function processPayment(method) {
@@ -359,6 +361,7 @@ function processPayment(method) {
 function showTransferDetails() {
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
+        <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
         <h3>Datos para Transferencia</h3>
         <div class="transfer-details" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
             <p style="margin-bottom: 0.5rem;"><strong>Banco:</strong> Banco XXX</p>
@@ -468,6 +471,7 @@ async function executePayment(method) {
         const icon = method === 'transfer' ? '⏳' : '✓';
 
         modalContent.innerHTML = `
+            <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
             <div class="payment-success">
                 <div class="success-icon">${icon}</div>
                 <h2>${title}</h2>
@@ -485,6 +489,7 @@ async function executePayment(method) {
     } catch (error) {
         console.error("Error CRÍTICO en executePayment:", error);
         modalContent.innerHTML = `
+            <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
             <div class="payment-error">
                 <h3>Error de Conexión</h3>
                 <p>Hubo un problema guardando la reserva: ${error.message}</p>
@@ -497,6 +502,7 @@ async function executePayment(method) {
 // Cerrar modal
 function closePaymentModal() {
     document.getElementById('paymentModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
 }
 
 // Resetear formulario
