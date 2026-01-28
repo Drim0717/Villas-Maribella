@@ -217,24 +217,31 @@ h4,
     margin: 0 auto;
 }
 
-/* Villa Selection Cards - Vertical */
+/* Villa Selection Cards - Vertical & Compact */
 .villa-number-btn {
     width: 100% !important;
     min-width: 100% !important;
-    padding: 1.5rem !important;
-    margin-bottom: 0.5rem;
+    height: auto !important;
+    min-height: 80px;
+    /* Base height to ensure consistency */
+    padding: 0.8rem 1.2rem !important;
+    /* Made more compact as requested */
+    margin-bottom: 0.8rem;
     text-align: left !important;
-    border-radius: 20px !important;
+    border-radius: 16px !important;
     border: 1px solid #eee !important;
     background: white !important;
     color: var(--deep-ocean) !important;
     transition: var(--transition);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
 }
 
 .villa-number-btn:hover {
     border-color: var(--cyan-vibrant) !important;
-    transform: translateX(5px);
+    transform: translateX(4px);
 }
 
 .villa-number-btn.active {
@@ -243,9 +250,17 @@ h4,
     box-shadow: 0 10px 25px rgba(0, 194, 255, 0.1);
 }
 
-.villa-number-btn .fs-5 {
+.villa-number-btn .fw-bold {
+    font-size: 1.1rem !important;
+    /* Slightly larger name */
     color: var(--deep-ocean);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+}
+
+.villa-number-btn .small {
+    font-size: 0.8rem !important;
+    /* Compact description */
+    opacity: 0.7;
 }
 
 /* Guest Counter Styles */
