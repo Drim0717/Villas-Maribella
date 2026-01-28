@@ -181,7 +181,7 @@ function isRangeAvailable(start, end, villaId) {
 
     while (tempDate < endDate) {
         if (isReserved(new Date(tempDate), villaId)) {
-            console.log("Fecha bloqueada detectada en el rango:", tempDate);
+            console.warn("Rango inválido: Fecha bloqueada detectada en", formatDate(tempDate));
             return false;
         }
         tempDate.setDate(tempDate.getDate() + 1);
@@ -192,6 +192,8 @@ function isRangeAvailable(start, end, villaId) {
 
 // Verificar si una fecha está reservada para una villa específica
 function isReserved(date, villaId) {
+    if (!(date instanceof Date)) date = new Date(date);
+
     // Si no se especifica villa, usar la villa actualmente seleccionada
     const checkVilla = villaId || currentVillaId;
     // Format checking date to YYYY-MM-DD to match storage format and avoid timezone issues
@@ -714,8 +716,17 @@ function selectVilla(villaId) {
         calendarIndicator.innerHTML = `Villa #${villaId}`;
     }
 
+    // REINICIAR SELECCIÓN al cambiar de villa para evitar errores de disponibilidad
+    selectedCheckIn = null;
+    selectedCheckOut = null;
+    if (document.getElementById('checkIn')) document.getElementById('checkIn').value = '';
+    if (document.getElementById('checkOut')) document.getElementById('checkOut').value = '';
+
     // IMPORTANTE: Recargar el calendario para mostrar disponibilidad de esta villa
-    loadReservationsData().then(() => renderCalendar());
+    loadReservationsData().then(() => {
+        renderCalendar();
+        updatePrice();
+    });
 }
 
 // Update villa image

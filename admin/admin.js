@@ -427,10 +427,13 @@ function handleBlockDates(e) {
     }
 
     const blockedDates = getBlockedDates();
+    const villaNumber = document.getElementById('blockVillaSelect').value;
+
     blockedDates.push({
         startDate: startDate,
         endDate: endDate,
-        reason: reason
+        reason: reason,
+        villaNumber: villaNumber
     });
 
     saveBlockedDates(blockedDates);
