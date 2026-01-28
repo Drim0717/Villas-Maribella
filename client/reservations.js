@@ -2,7 +2,17 @@
 // SISTEMA DE RESERVAS - VILLAS MARIBELLA
 // ============================================
 
-const PRICE_PER_NIGHT = 45; // USD
+const VILLA_CONFIG = {
+    '1A': { price: 55, maxGuests: 2, name: 'Villa #1A' },
+    '2B': { price: 55, maxGuests: 2, name: 'Villa #2B' },
+    '3C': { price: 55, maxGuests: 2, name: 'Villa #3C' },
+    '4D': { price: 85, maxGuests: 4, name: 'Villa #4D' },
+    '5E': { price: 85, maxGuests: 4, name: 'Villa #5E' },
+    '6F': { price: 85, maxGuests: 4, name: 'Villa #6F' }
+};
+
+let currentVillaId = '1A';
+let numGuests = 2; // Initial state
 let selectedCheckIn = null;
 let selectedCheckOut = null;
 let currentMonth = new Date();
@@ -37,7 +47,36 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Event listener para el formulario
     document.getElementById('reservationForm').addEventListener('submit', handleReservation);
+
+    // Initial capacity setup
+    updateCapacityLabel();
 });
+
+// Contador de huéspedes
+function changeGuests(delta) {
+    const config = VILLA_CONFIG[currentVillaId];
+    const newCount = numGuests + delta;
+
+    if (newCount >= 1 && newCount <= config.maxGuests) {
+        numGuests = newCount;
+        updateGuestUI();
+        updatePrice();
+    }
+}
+
+function updateGuestUI() {
+    const guestCountDisplay = document.getElementById('guestCountDisplay');
+    if (guestCountDisplay) {
+        guestCountDisplay.innerText = `${numGuests} ${numGuests === 1 ? 'Persona' : 'Personas'}`;
+    }
+}
+
+function updateCapacityLabel() {
+    const label = document.getElementById('maxCapacityLabel');
+    if (label) {
+        label.innerText = `Capacidad máxima para Villa #${currentVillaId}: ${VILLA_CONFIG[currentVillaId].maxGuests} personas`;
+    }
+}
 
 async function loadReservationsData() {
     try {
@@ -208,42 +247,28 @@ function formatDate(date) {
 function updatePrice() {
     const priceDisplay = document.getElementById('totalPrice');
     const nightsDisplay = document.getElementById('numNights');
-    const priceBreakdown = document.getElementById('priceBreakdown');
+    const priceDetail = document.getElementById('priceDetail');
+    const config = VILLA_CONFIG[currentVillaId];
 
-    if (!priceBreakdown || !priceDisplay || !nightsDisplay) return; // Robust Guard clause
+    if (!priceDisplay || !nightsDisplay) return;
 
     if (!selectedCheckIn || !selectedCheckOut) {
         priceDisplay.textContent = '$0.00';
         nightsDisplay.textContent = '0';
-        priceBreakdown.innerHTML = '<p class="text-muted">Selecciona las fechas de check-in y check-out</p>';
+        if (priceDetail) priceDetail.textContent = `$${config.price} x 0`;
         return;
     }
 
     // Calcular número de noches
     const nights = Math.ceil((selectedCheckOut - selectedCheckIn) / (1000 * 60 * 60 * 24));
-    const total = nights * PRICE_PER_NIGHT;
+    const total = nights * config.price;
 
     nightsDisplay.textContent = nights;
     priceDisplay.textContent = `$${total.toFixed(2)}`;
 
-    // Mostrar desglose
-    const numGuestsElem = document.getElementById('numGuests');
-    const numGuests = numGuestsElem ? (numGuestsElem.value || 1) : 1;
-    priceBreakdown.innerHTML = `
-        <div class="price-item">
-            <span>$${PRICE_PER_NIGHT} × ${nights} noche(s)</span>
-            <span>$${total.toFixed(2)}</span>
-        </div>
-        <div class="price-item">
-            <span>${numGuests} persona(s)</span>
-            <span>Incluido</span>
-        </div>
-        <hr>
-        <div class="price-item total">
-            <strong>Total</strong>
-            <strong>$${total.toFixed(2)} USD</strong>
-        </div>
-    `;
+    if (priceDetail) {
+        priceDetail.textContent = `$${config.price} x ${nights}`;
+    }
 }
 
 // Manejar reserva
@@ -264,8 +289,8 @@ function handleReservation(e) {
     }
 
     const guestsValue = parseInt(document.getElementById('numGuests').value);
-    if (guestsValue > 4) {
-        alert('El máximo de personas permitidas por villa es 4.');
+    if (guestsValue > VILLA_CONFIG[selectedVilla].maxGuests) {
+        alert(`El máximo de personas permitidas para Villa #${selectedVilla} es ${VILLA_CONFIG[selectedVilla].maxGuests}.`);
         return;
     }
 
@@ -273,7 +298,7 @@ function handleReservation(e) {
     const guestEmail = document.getElementById('guestEmail').value;
     const numGuests = document.getElementById('numGuests').value;
     const nights = Math.ceil((selectedCheckOut - selectedCheckIn) / (1000 * 60 * 60 * 24));
-    const total = nights * PRICE_PER_NIGHT;
+    const total = nights * VILLA_CONFIG[selectedVilla].price;
 
     // Mostrar modal de pago
     showPaymentModal(guestName, total, nights, selectedVilla);
@@ -356,19 +381,22 @@ async function executePayment(method) {
         return;
     }
 
+    const villaSelect = document.getElementById('villaSelect');
+    const selectedVilla = villaSelect ? villaSelect.value : '1'; // Default to '1' if not found
+
     const nights = Math.ceil((selectedCheckOut - selectedCheckIn) / (1000 * 60 * 60 * 24));
-    const total = nights * PRICE_PER_NIGHT;
+    const total = nights * VILLA_CONFIG[selectedVilla].price;
 
     // Obtener valores con fallbacks seguros para evitar 'undefined' en Firestore
     const guestNameInput = document.getElementById('guestName');
     const guestEmailInput = document.getElementById('guestEmail');
     const numGuestsInput = document.getElementById('numGuests');
-    const villaSelect = document.getElementById('villaSelect');
+
 
     const guestName = guestNameInput ? guestNameInput.value : 'Anónimo';
     const guestEmail = guestEmailInput ? guestEmailInput.value : 'no-email@test.com';
     const numGuests = numGuestsInput ? (parseInt(numGuestsInput.value) || 1) : 1;
-    const selectedVilla = villaSelect ? villaSelect.value : '1';
+
 
     const confirmationCode = 'VM-' + Math.floor(Math.random() * 100000);
 
@@ -542,19 +570,18 @@ function getBlockedDatesFromStorage() {
 // VILLA GALLERY FUNCTIONALITY
 // ============================================
 
-// Villa images mapping (using existing images and rotating them)
+// Villa images mapping
 const villaImages = {
-    1: ['../images/sala.jpg', '../images/cocina.jpg', '../images/bano.jpg'],
-    2: ['../images/cocina.jpg', '../images/sala.jpg', '../images/bano.jpg'],
-    3: ['../images/bano.jpg', '../images/sala.jpg', '../images/cocina.jpg'],
-    4: ['../images/sala.jpg', '../images/bano.jpg', '../images/cocina.jpg'],
-    5: ['../images/cocina.jpg', '../images/bano.jpg', '../images/sala.jpg'],
-    6: ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg']
+    '1A': ['../images/sala.jpg', '../images/cocina.jpg', '../images/bano.jpg'],
+    '2B': ['../images/cocina.jpg', '../images/sala.jpg', '../images/bano.jpg'],
+    '3C': ['../images/bano.jpg', '../images/sala.jpg', '../images/cocina.jpg'],
+    '4D': ['../images/sala.jpg', '../images/bano.jpg', '../images/cocina.jpg'],
+    '5E': ['../images/cocina.jpg', '../images/bano.jpg', '../images/sala.jpg'],
+    '6F': ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg']
 };
 
 let currentVillaImageIndex = 0;
-let currentVillaNumber = 1;
-let currentVillaId = '1A';
+let currentVillaNumber = '1A'; // Changed to string to match VILLA_CONFIG keys
 
 // Initialize villa gallery
 document.addEventListener('DOMContentLoaded', function () {
@@ -598,17 +625,24 @@ document.addEventListener('DOMContentLoaded', function () {
 function selectVilla(villaId) {
     if (!villaId) return;
     currentVillaId = villaId;
-    currentVillaNumber = parseInt(villaId); // For images mapping
-    currentVillaImageIndex = 0;
+    currentVillaNumber = villaId; // Use villaId directly for images mapping
 
-    // Update active button
-    const villaButtons = document.querySelectorAll('.villa-number-btn');
-    villaButtons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('data-villa') === villaId) {
-            btn.classList.add('active');
-        }
+    // Check if current numGuests exceeds new villa capacity
+    const max = VILLA_CONFIG[villaId].maxGuests;
+    if (numGuests > max) {
+        numGuests = max;
+        updateGuestUI();
+    }
+
+    updateCapacityLabel();
+
+    // Update active button state
+    document.querySelectorAll('.villa-number-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-villa') === villaId);
     });
+
+    // Reset image index for the new villa
+    currentVillaImageIndex = 0;
 
     // Update villa title
     const villaTitle = document.getElementById('villaTitle');
@@ -690,3 +724,20 @@ window.resetForm = resetForm;
 window.navigateImage = navigateImage;
 window.selectVilla = selectVilla;
 window.updateVillaImage = updateVillaImage;
+window.changeGuests = changeGuests;
+
+// ============================================
+// NAVBAR SCROLL LOGIC
+// ============================================
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+
+    if (window.scrollY > 50) {
+        navbar.classList.add('navbar-dark-solid');
+        navbar.classList.remove('navbar-transparent');
+    } else {
+        navbar.classList.add('navbar-transparent');
+        navbar.classList.remove('navbar-dark-solid');
+    }
+});

@@ -16,34 +16,33 @@
 
 <body>
     <!-- NAVEGACIÓN -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-light navbar-transparent transition-all">
         <div class="container">
-            <a class="navbar-brand logo" href="#">
-                <img src="../images/Logo.png" alt="Villas Maribella" class="logo-image">
+            <a class="navbar-brand logo-text" href="#inicio">
+                Maribella
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav gap-3">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto gap-lg-4">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#inicio">Inicio</a>
+                        <a class="nav-link" href="#amenidades">Villas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#acerca">Acerca</a>
+                        <a class="nav-link" href="#acerca">Experiencias</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#amenidades">Amenidades</a>
+                        <a class="nav-link" href="#galeria">Nosotros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#galeria">Galería</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-4 rounded-pill" href="#contacto">Reserva
-                            Ahora</a>
+                        <a class="nav-link" href="#contacto">Contacto</a>
                     </li>
                 </ul>
+                <div class="d-none d-lg-block">
+                    <a class="btn btn-primary btn-reserve rounded-pill px-4" href="#contacto">Reservar Ahora</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -52,13 +51,12 @@
     <section id="inicio" class="hero d-flex align-items-center vh-100 position-relative">
         <div class="container text-center text-white position-relative z-index-2">
             <div class="row justify-content-center">
-                <div class="col-lg-8 hero-content">
-                    <h1 class="display-3 fw-bold mb-4">El Lugar Perfecto</h1>
-                    <p class="lead mb-5">Un espacio inigualable para residir y pasar momentos de paz junto a la
-                        naturaleza tropical que nos ofrece Cabarete. Un paraíso a pocos metros de la playa.</p>
-                    <a href="#contacto"
-                        class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary shadow-lg">Reserva Tu
-                        Villa</a>
+                <div class="col-lg-10 hero-content">
+                    <h1 class="display-1 hero-title mb-4">Villas Maribella</h1>
+                    <p class="hero-subtitle mb-5">Descubre el paraíso en la tierra. Lujo minimalista y <br
+                            class="d-none d-md-block"> serenidad tropical en cada rincón.</p>
+                    <a href="#amenidades" class="btn btn-cyan btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg">Explorar
+                        Villas</a>
                 </div>
             </div>
         </div>
@@ -231,8 +229,8 @@
     <section id="contacto" class="py-5 contact-section text-white position-relative">
         <div class="container position-relative z-index-2">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold text-white mb-3">Reserva tu Villa</h2>
-                <p class="lead text-white-50">Selecciona tus fechas y reserva tu estadía en el paraíso</p>
+                <h2 class="display-5 fw-bold mb-3">Reserva tu Experiencia</h2>
+                <p class="lead">Consulta disponibilidad y asegura tu lugar en el paraíso.</p>
             </div>
 
             <!-- VILLA GALLERY & CALENDAR ROW -->
@@ -240,14 +238,44 @@
                 <!-- COLUMNA IZQUIERDA: GALERIA Y CALENDARIO -->
                 <div class="col-lg-7">
                     <div class="bg-white rounded-4 p-4 shadow-lg text-dark mb-4">
-                        <h3 class="h5 text-primary fw-bold mb-3">🏝️ Conoce Nuestras Villas</h3>
-                        <div class="villa-selector d-flex flex-wrap gap-2 justify-content-center mb-4">
-                            <button class="btn btn-outline-primary villa-number-btn active" data-villa="1A">1</button>
-                            <button class="btn btn-outline-primary villa-number-btn" data-villa="2B">2</button>
-                            <button class="btn btn-outline-primary villa-number-btn" data-villa="3D">3</button>
-                            <button class="btn btn-outline-primary villa-number-btn" data-villa="4E">4</button>
-                            <button class="btn btn-outline-primary villa-number-btn" data-villa="5F">5</button>
-                            <button class="btn btn-outline-primary villa-number-btn" data-villa="6G">6</button>
+                        <h3 class="h5 text-primary fw-bold mb-4">SELECCIONAR VILLA</h3>
+                        <div class="villa-selector d-flex flex-column gap-3 mb-5">
+                            <button class="villa-number-btn active" data-villa="1A">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #1A</div>
+                                    <div class="small opacity-75">Hasta 2 personas • $55 / noche</div>
+                                </div>
+                            </button>
+                            <button class="villa-number-btn" data-villa="2B">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #2B</div>
+                                    <div class="small opacity-75">Hasta 2 personas • $55 / noche</div>
+                                </div>
+                            </button>
+                            <button class="villa-number-btn" data-villa="3C">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #3C</div>
+                                    <div class="small opacity-75">Hasta 2 personas • $55 / noche</div>
+                                </div>
+                            </button>
+                            <button class="villa-number-btn" data-villa="4D">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #4D</div>
+                                    <div class="small opacity-75">Hasta 4 personas • $85 / noche</div>
+                                </div>
+                            </button>
+                            <button class="villa-number-btn" data-villa="5E">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #5E</div>
+                                    <div class="small opacity-75">Hasta 4 personas • $85 / noche</div>
+                                </div>
+                            </button>
+                            <button class="villa-number-btn" data-villa="6F">
+                                <div class="text-start">
+                                    <div class="fw-bold fs-5">Villa #6F</div>
+                                    <div class="small opacity-75">Hasta 4 personas • $85 / noche</div>
+                                </div>
+                            </button>
                         </div>
 
                         <div class="villa-display row g-4 align-items-center">
@@ -309,77 +337,65 @@
                 </div>
 
                 <!-- COLUMNA DERECHA: FORMULARIO -->
-                <div class="col-lg-5">
-                    <div class="bg-white rounded-4 p-4 shadow-lg text-dark h-100">
-                        <h3 class="h4 fw-bold mb-4">Detalles de tu Reserva</h3>
-                        <form id="reservationForm">
-                            <div class="mb-3">
-                                <label for="guestName" class="form-label fw-bold small">Nombre Completo</label>
-                                <input type="text" class="form-control" id="guestName" required
-                                    placeholder="Nombre del huésped principal">
+                <div class="col-lg-4 offset-lg-1">
+                    <div class="reservation-summary-card h-100">
+                        <div class="summary-header">
+                            <h3>Detalle de Reserva</h3>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-white-50 small"><span id="numNights">0</span> noches</span>
+                                <span class="text-white-50 small" id="priceDetail">$0 x 0</span>
                             </div>
-                            <div class="mb-3">
-                                <label for="guestEmail" class="form-label fw-bold small">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="guestEmail" required
-                                    placeholder="tu@email.com">
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="fw-bold">TOTAL</span>
+                                <span class="fs-2 fw-bold" id="totalPrice">$0.00</span>
                             </div>
-                            <div class="mb-3">
-                                <label for="villaSelect" class="form-label fw-bold small">Selecciona tu Villa</label>
-                                <select id="villaSelect" class="form-select" required>
-                                    <option value="">-- Elige una villa --</option>
-                                    <option value="1A">Villa #1A</option>
-                                    <option value="2B">Villa #2B</option>
-                                    <option value="3D">Villa #3D</option>
-                                    <option value="4E">Villa #4E</option>
-                                    <option value="5F">Villa #5F</option>
-                                    <option value="6G">Villa #6G</option>
-                                </select>
-                            </div>
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <label for="checkIn" class="form-label fw-bold small">Check-in</label>
-                                    <input type="text" class="form-control bg-light" id="checkIn" readonly
-                                        placeholder="--/--/--">
+                        </div>
+                        <div class="summary-body">
+                            <form id="reservationForm">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="guestName" required
+                                        placeholder="Nombre Completo">
                                 </div>
-                                <div class="col-6">
-                                    <label for="checkOut" class="form-label fw-bold small">Check-out</label>
-                                    <input type="text" class="form-control bg-light" id="checkOut" readonly
-                                        placeholder="--/--/--">
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" id="guestEmail" required
+                                        placeholder="Correo Electrónico">
                                 </div>
-                            </div>
-                            <div class="mb-4">
-                                <label for="numGuests" class="form-label fw-bold small">Huéspedes</label>
-                                <select class="form-select" id="numGuests" required>
-                                    <option value="1">1 Persona</option>
-                                    <option value="2" selected>2 Personas</option>
-                                    <option value="3">3 Personas</option>
-                                    <option value="4">4 Personas</option>
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <input type="tel" class="form-control" id="guestPhone" placeholder="Teléfono">
+                                </div>
 
-                            <div class="bg-light p-3 rounded-3 mb-4">
-                                <h6 class="fw-bold mb-3 border-bottom pb-2">Resumen de Precio</h6>
-                                <div id="priceBreakdown" class="small mb-2">
-                                    <!-- Populated by JS -->
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Noches:</span>
-                                        <strong id="numNights">0</strong>
+                                <div class="mb-4">
+                                    <label class="small fw-bold text-primary mb-3 d-block">HUÉSPEDES</label>
+                                    <div
+                                        class="guest-counter-container d-flex align-items-center justify-content-between p-3 bg-light rounded-4 mb-2">
+                                        <button type="button" class="btn btn-counter"
+                                            onclick="changeGuests(-1)">-</button>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="bi bi-people fs-4 text-primary"></i>
+                                            <span id="guestCountDisplay" class="fw-bold fs-5">2 Personas</span>
+                                        </div>
+                                        <button type="button" class="btn btn-counter"
+                                            onclick="changeGuests(1)">+</button>
                                     </div>
+                                    <input type="hidden" id="numGuests" value="2">
+                                    <p id="maxCapacityLabel" class="text-muted small text-center fst-italic mt-3">
+                                        Capacidad máxima para Villa #1A: 2 personas
+                                    </p>
                                 </div>
-                                <div class="d-flex justify-content-between fs-5 fw-bold text-primary border-top pt-2">
-                                    <span>Total:</span>
-                                    <span id="totalPrice">$0.00</span>
-                                </div>
-                            </div>
 
-                            <button type="submit"
-                                class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow">Continuar al
-                                Pago</button>
-                        </form>
-                        <hr class="my-4">
-                        <div class="text-center small text-muted">
-                            <p class="mb-1"><i class="bi bi-telephone-fill me-1"></i> 809-223-3901</p>
-                            <p class="mb-0"><i class="bi bi-envelope-fill me-1"></i> villasmaribellard@gmail.com</p>
+                                <div class="mb-3 d-none">
+                                    <select id="villaSelect" class="form-select" required>
+                                        <option value="1A">Villa #1A</option>
+                                        <option value="2B">Villa #2B</option>
+                                        <option value="3D">Villa #3D</option>
+                                        <option value="4E">Villa #4E</option>
+                                        <option value="5F">Villa #5F</option>
+                                        <option value="6G">Villa #6G</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-confirm-booking w-100">Confirmar Reserva</button>
+                            </form>
                         </div>
                     </div>
                 </div>
