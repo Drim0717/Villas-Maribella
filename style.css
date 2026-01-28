@@ -1372,6 +1372,7 @@ section {
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 1px;
+    color: #0077B6
 }
 
 .badge-nights-premium {
@@ -1390,12 +1391,14 @@ section {
     margin: 0;
     font-family: 'Playfair Display', serif;
     letter-spacing: -1px;
+    color: #0077B6
 }
 
 .price-detail-premium {
     font-size: 0.9rem;
     opacity: 0.8;
     font-weight: 500;
+    color: #0077B6
 }
 
 
