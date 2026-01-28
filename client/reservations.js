@@ -167,6 +167,29 @@ function renderCalendar() {
     }
 }
 
+// Verificar si un rango de fechas está disponible (sin bloqueos ni otras reservas en medio)
+function isRangeAvailable(start, end, villaId) {
+    if (!start || !end) return true;
+
+    // Asegurar que comparamos fechas normalizadas (00:00:00)
+    let tempDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+    // Empezamos desde el día después del check-in hasta el día ANTES del check-out
+    // para cumplir con la lógica de check-in/check-out overlap (exclusive check-out)
+    tempDate.setDate(tempDate.getDate() + 1);
+
+    while (tempDate < endDate) {
+        if (isReserved(new Date(tempDate), villaId)) {
+            console.log("Fecha bloqueada detectada en el rango:", tempDate);
+            return false;
+        }
+        tempDate.setDate(tempDate.getDate() + 1);
+    }
+
+    return true;
+}
+
 // Verificar si una fecha está reservada para una villa específica
 function isReserved(date, villaId) {
     // Si no se especifica villa, usar la villa actualmente seleccionada
@@ -231,20 +254,8 @@ function selectDate(date) {
     } else if (date > selectedCheckIn) {
         // Segunda selección (check-out)
         // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
-        let tempDate = new Date(selectedCheckIn);
-        tempDate.setDate(tempDate.getDate() + 1); // Empezar desde el día después del check-in
-
-        let hasBlockedDate = false;
-        while (tempDate < date) {
-            if (isReserved(new Date(tempDate))) {
-                hasBlockedDate = true;
-                break;
-            }
-            tempDate.setDate(tempDate.getDate() + 1);
-        }
-
-        if (hasBlockedDate) {
-            alert('No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas.');
+        if (!isRangeAvailable(selectedCheckIn, date)) {
+            alert('No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas. Por favor elige otro periodo.');
             return;
         }
 
@@ -312,6 +323,12 @@ function handleReservation(e) {
 
     if (!selectedVilla) {
         alert('Por favor selecciona una villa');
+        return;
+    }
+
+    // Doble verificación de disponibilidad antes de proceder
+    if (!isRangeAvailable(selectedCheckIn, selectedCheckOut, selectedVilla)) {
+        alert('Lo sentimos, algunas fechas en este rango ya no están disponibles. Por favor selecciona un nuevo período en el calendario.');
         return;
     }
 
