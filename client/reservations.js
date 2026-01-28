@@ -230,6 +230,24 @@ function selectDate(date) {
         document.getElementById('checkOut').value = '';
     } else if (date > selectedCheckIn) {
         // Segunda selección (check-out)
+        // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
+        let tempDate = new Date(selectedCheckIn);
+        tempDate.setDate(tempDate.getDate() + 1); // Empezar desde el día después del check-in
+
+        let hasBlockedDate = false;
+        while (tempDate < date) {
+            if (isReserved(new Date(tempDate))) {
+                hasBlockedDate = true;
+                break;
+            }
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        if (hasBlockedDate) {
+            alert('No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas.');
+            return;
+        }
+
         selectedCheckOut = date;
         document.getElementById('checkOut').value = formatDate(date);
     } else {
