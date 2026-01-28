@@ -6,3 +6,4 @@ dist/
 build/
 server/node_modules/
 server/.env
+*.json
