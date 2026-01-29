@@ -175,10 +175,9 @@ function isRangeAvailable(start, end, villaId) {
     let tempDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
-    // Empezamos desde el día después del check-in hasta el día ANTES del check-out
-    // para cumplir con la lógica de check-in/check-out overlap (exclusive check-out)
-    tempDate.setDate(tempDate.getDate() + 1);
-
+    // Validar cada día del rango
+    // Nota: El día de check-out suele ser el mediodía, así que se permite que sea 
+    // el mismo día que otro check-in. Por eso el bucle es < endDate.
     while (tempDate < endDate) {
         if (isReserved(new Date(tempDate), villaId)) {
             console.warn("Rango inválido: Fecha bloqueada detectada en", formatDate(tempDate));
@@ -247,8 +246,19 @@ function isInRange(date) {
 
 // Seleccionar fecha
 function selectDate(date) {
-    if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
-        // Primera selección o reiniciar
+    const dateStr = date.toDateString();
+
+    // LÓGICA DE DESELECCIÓN: Si ya está seleccionada como check-in o check-out, se quita
+    if (selectedCheckIn && dateStr === selectedCheckIn.toDateString()) {
+        selectedCheckIn = selectedCheckOut; // Shift check-out to check-in if check-in is removed
+        selectedCheckOut = null;
+        document.getElementById('checkIn').value = selectedCheckIn ? formatDate(selectedCheckIn) : '';
+        document.getElementById('checkOut').value = '';
+    } else if (selectedCheckOut && dateStr === selectedCheckOut.toDateString()) {
+        selectedCheckOut = null;
+        document.getElementById('checkOut').value = '';
+    } else if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
+        // Primera selección o reiniciar después de tener un rango completo
         selectedCheckIn = date;
         selectedCheckOut = null;
         document.getElementById('checkIn').value = formatDate(date);
@@ -264,7 +274,7 @@ function selectDate(date) {
         selectedCheckOut = date;
         document.getElementById('checkOut').value = formatDate(date);
     } else {
-        // Si selecciona una fecha anterior, reiniciar
+        // Si selecciona una fecha anterior al check-in actual, esta se convierte en el nuevo check-in
         selectedCheckIn = date;
         selectedCheckOut = null;
         document.getElementById('checkIn').value = formatDate(date);
