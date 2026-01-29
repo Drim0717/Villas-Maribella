@@ -58,7 +58,7 @@
                     <h1 class="display-1 hero-title mb-4">Villas Maribella</h1>
                     <p class="hero-subtitle mb-5">Descubre el paraíso en la tierra. Lujo minimalista y <br
                             class="d-none d-md-block"> serenidad tropical en cada rincón.</p>
-                    <a href="#amenidades" class="btn btn-cyan btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg">Explorar
+                    <a href="#galeria" class="btn btn-cyan btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg">Explorar
                         Villas</a>
                 </div>
             </div>
@@ -237,9 +237,7 @@
             </div>
 
 
-            <!-- MAIN RESERVATION GRID 2x2 -->
             <div class="row g-4 mb-5">
-                <!-- TOP LEFT: GALLERY (RED CONCEPT) -->
                 <div class="col-lg-6">
                     <div class="card border-0 rounded-4 shadow-lg overflow-hidden h-100 bg-white">
                         <div id="villaGallery" class="villa-gallery-container position-relative" style="height: 350px;">
@@ -265,7 +263,6 @@
                     </div>
                 </div>
 
-                <!-- TOP RIGHT: SELECTOR (BLUE CONCEPT) -->
                 <div class="col-lg-6">
                     <div class="bg-white rounded-4 p-4 shadow-lg text-dark h-100">
                         <h3 class="h5 text-primary fw-bold mb-4 d-flex align-items-center">
@@ -312,7 +309,6 @@
                     </div>
                 </div>
 
-                <!-- BOTTOM LEFT: CALENDAR (YELLOW CONCEPT) -->
                 <div class="col-lg-6">
                     <div class="bg-white rounded-4 p-4 shadow-lg text-dark h-100">
                         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -337,7 +333,7 @@
                     </div>
                 </div>
 
-                <!-- BOTTOM RIGHT: FORM (GREEN CONCEPT) -->
+
                 <div class="col-lg-6">
                     <div class="bg-white rounded-4 p-4 shadow-lg text-dark h-100 d-flex flex-column">
                         <div class="summary-box-premium mb-4 p-4 rounded-4 shadow-sm">
@@ -397,6 +393,37 @@
         <div class="hero-overlay" style="z-index: 1;"></div>
     </section>
 
+    <!-- SECCIÓN DETALLES DE CONTACTO -->
+    <section id="detalles-contacto" class="py-5 bg-white">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="contact-card-premium p-5 rounded-4 shadow-lg text-center">
+                        <h2 class="display-6 fw-bold text-primary mb-4">¿Preguntas? Habla con nosotros</h2>
+                        <p class="lead text-muted mb-5">Estamos aquí para ayudarte a planificar tu estadía perfecta.</p>
+
+                        <div class="row g-4 justify-content-center">
+                            <div class="col-md-5">
+                                <div class="contact-item p-4 rounded-4 bg-light h-100 transition-all">
+                                    <i class="bi bi-whatsapp fs-1 text-success mb-3 d-block"></i>
+                                    <h4 class="h5 fw-bold mb-2">WhatsApp / Tel</h4>
+                                    <p class="mb-0 text-dark fs-5">+1 (829) 555-0101</p>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="contact-item p-4 rounded-4 bg-light h-100 transition-all">
+                                    <i class="bi bi-envelope-at fs-1 text-primary mb-3 d-block"></i>
+                                    <h4 class="h5 fw-bold mb-2">Email</h4>
+                                    <p class="mb-0 text-dark fs-5">reservas@villasmaribella.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- MODAL DE PAGO -->
     <div id="paymentModal" class="modal">
         <div class="modal-dialog">
@@ -404,6 +431,12 @@
                 <!-- Contenido dinámico generado por JavaScript -->
             </div>
         </div>
+    </div>
+
+    <!-- LIGHTBOX PARA IMÁGENES -->
+    <div id="lightbox" class="lightbox" onclick="window.closeLightbox()">
+        <span class="close-lightbox" onclick="window.closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
     </div>
 
 
