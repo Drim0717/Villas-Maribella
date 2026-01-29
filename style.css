@@ -1751,3 +1751,36 @@ body.modal-open {
     color: white;
     border-color: var(--tropical-blue);
 }
+
+/* ============================================
+   ESTILOS ADICIONALES PARA CONTACTO
+   ============================================ */
+.contact-item {
+    transition: var(--transition);
+    border: 2px solid transparent !important;
+}
+
+.contact-item:hover {
+    transform: translateY(-8px);
+    background-color: #ffffff !important;
+    border-color: var(--tropical-blue) !important;
+    box-shadow: 0 15px 35px rgba(0, 180, 216, 0.15) !important;
+}
+
+.contact-item p {
+    word-break: break-all;
+}
+
+@media (max-width: 576px) {
+    .contact-item {
+        padding: 1.5rem !important;
+    }
+
+    .contact-item i {
+        font-size: 2.5rem !important;
+    }
+
+    .contact-item p {
+        font-size: 1.1rem !important;
+    }
+}
