@@ -849,7 +849,10 @@ section {
 
 .social-links a {
     color: var(--white);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
     transition: all 0.3s ease;
 }
 
