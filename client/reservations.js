@@ -55,11 +55,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     const modal = document.getElementById('paymentModal');
     if (modal) {
         modal.addEventListener('click', function (e) {
-            const modalContent = document.getElementById('modalContent');
-            // Si el click NO fue dentro del contenido del modal, cerrar
-            if (modalContent && !modalContent.contains(e.target)) {
+            // Solo cerrar si el click es directamente en el modal (fondo oscuro)
+            if (e.target === modal) {
                 closePaymentModal();
             }
+        });
+    }
+
+    // Prevenir que clicks dentro del contenido cierren el modal
+    const modalContent = document.getElementById('modalContent');
+    if (modalContent) {
+        modalContent.addEventListener('click', function (e) {
+            e.stopPropagation();
         });
     }
 });
@@ -423,20 +430,51 @@ function showTransferDetails() {
     const modalContent = document.getElementById('modalContent');
     modalContent.innerHTML = `
         <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
-        <h3>Datos para Transferencia</h3>
-        <div class="transfer-details" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; text-align: left;">
-            <p style="margin-bottom: 0.5rem;"><strong>Banco:</strong> Banco XXX</p>
-            <p style="margin-bottom: 0.5rem;"><strong>Número de Cuenta:</strong> XXX-XXX-XXX</p>
-            <p style="margin-bottom: 0.5rem;"><strong>Identificación:</strong> XXX-XXX-XXX</p>
-            <p style="margin-bottom: 0;"><strong>Beneficiario:</strong> Vincenzo Pampillonia</p>
+        <h3 class="text-primary fw-bold mb-4">Datos para Transferencia</h3>
+        <p class="text-muted mb-4">Selecciona tu banco y realiza la transferencia por el monto total. Conserva tu comprobante.</p>
+        
+        <div class="accordion accordion-flush" id="bankAccordion">
+            <!-- Bank of America -->
+            <div class="accordion-item border rounded-3 mb-3">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#bankOfAmerica" aria-expanded="false" aria-controls="bankOfAmerica">
+                        <i class="bi bi-bank me-2"></i> Bank of America
+                    </button>
+                </h2>
+                <div id="bankOfAmerica" class="accordion-collapse collapse" data-bs-parent="#bankAccordion">
+                    <div class="accordion-body bg-light">
+                        <p class="mb-2"><strong>Banco:</strong> Bank of America</p>
+                        <p class="mb-2"><strong>Número de Cuenta:</strong> XXX-XXX-XXX</p>
+                        <p class="mb-2"><strong>Routing Number:</strong> XXX-XXX-XXX</p>
+                        <p class="mb-0"><strong>Beneficiario:</strong> Vincenzo Pampillonia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banco Popular Dominicano -->
+            <div class="accordion-item border rounded-3 mb-3">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#bancoPopular" aria-expanded="false" aria-controls="bancoPopular">
+                        <i class="bi bi-bank me-2"></i> Banco Popular Dominicano
+                    </button>
+                </h2>
+                <div id="bancoPopular" class="accordion-collapse collapse" data-bs-parent="#bankAccordion">
+                    <div class="accordion-body bg-light">
+                        <p class="mb-2"><strong>Banco:</strong> Banco Popular Dominicano</p>
+                        <p class="mb-2"><strong>Número de Cuenta:</strong> XXX-XXX-XXX</p>
+                        <p class="mb-2"><strong>Identificación:</strong> XXX-XXX-XXX</p>
+                        <p class="mb-0"><strong>Beneficiario:</strong> Vincenzo Pampillonia</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: #666;">
-            Por favor realiza la transferencia por el monto total y conserva tu comprobante.
-        </p>
-        <button class="confirm-btn" onclick="executePayment('transfer')">
+
+        <button class="btn-confirm-modern w-100 py-3 fw-bold rounded-4 shadow-sm text-uppercase mt-4" onclick="executePayment('transfer')">
             Confirmar Transferencia
         </button>
-        <button class="cancel-btn" onclick="closePaymentModal()" style="margin-top: 10px;">
+        <button class="cancel-btn w-100 mt-2" onclick="closePaymentModal()">
             Cancelar
         </button>
     `;
