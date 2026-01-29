@@ -50,6 +50,16 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Initial capacity setup
     updateCapacityLabel();
+
+    // Click fuera del modal para cerrar
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
+    }
 });
 
 // Contador de huéspedes
@@ -266,8 +276,10 @@ function selectDate(date) {
     } else if (date > selectedCheckIn) {
         // Segunda selección (check-out)
         // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
+        // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
         if (!isRangeAvailable(selectedCheckIn, date)) {
-            alert('No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas. Por favor elige otro periodo.');
+            showNotification('Rango No Disponible', 'No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas. Por favor elige otro periodo.', true);
+            resetForm();
             return;
         }
 
@@ -326,7 +338,7 @@ function handleReservation(e) {
     e.preventDefault();
 
     if (!selectedCheckIn || !selectedCheckOut) {
-        alert('Por favor selecciona las fechas de tu estadía');
+        showNotification('Faltan Datos', 'Por favor selecciona las fechas de tu estadía', true);
         return;
     }
 
@@ -334,19 +346,20 @@ function handleReservation(e) {
     const selectedVilla = villaSelect ? villaSelect.value : '';
 
     if (!selectedVilla) {
-        alert('Por favor selecciona una villa');
+        showNotification('Seleccionar Villa', 'Por favor selecciona una villa', true);
         return;
     }
 
     // Doble verificación de disponibilidad antes de proceder
     if (!isRangeAvailable(selectedCheckIn, selectedCheckOut, selectedVilla)) {
-        alert('Lo sentimos, algunas fechas en este rango ya no están disponibles. Por favor selecciona un nuevo período en el calendario.');
+        showNotification('No Disponible', 'Lo sentimos, algunas fechas en este rango ya no están disponibles. Por favor selecciona un nuevo período en el calendario.', true);
+        resetForm();
         return;
     }
 
     const guestsValue = parseInt(document.getElementById('numGuests').value);
     if (guestsValue > VILLA_CONFIG[selectedVilla].maxGuests) {
-        alert(`El máximo de personas permitidas para Villa #${selectedVilla} es ${VILLA_CONFIG[selectedVilla].maxGuests}.`);
+        showNotification('Capacidad Excedida', `El máximo de personas permitidas para Villa #${selectedVilla} es ${VILLA_CONFIG[selectedVilla].maxGuests}.`, true);
         return;
     }
 
@@ -435,7 +448,7 @@ async function executePayment(method) {
 
     // Validar fechas antes de continuar
     if (!selectedCheckIn || !selectedCheckOut) {
-        alert("Error de fechas. Por favor recarga la página.");
+        showNotification('Error', "Error de fechas. Por favor recarga la página.", true);
         closePaymentModal();
         return;
     }
@@ -537,13 +550,39 @@ async function executePayment(method) {
         console.error("Error CRÍTICO en executePayment:", error);
         modalContent.innerHTML = `
             <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
-            <div class="payment-error">
-                <h3>Error de Conexión</h3>
+            <div class="payment-error p-4 text-center">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3 d-block"></i>
+                <h3 class="text-danger">Error de Conexión</h3>
                 <p>Hubo un problema guardando la reserva: ${error.message}</p>
-                <button class="cancel-btn" onclick="closePaymentModal()">Cerrar</button>
+                <button class="btn-confirm-modern px-5 py-2 mt-3 rounded-pill" onclick="closePaymentModal()">Cerrar</button>
             </div>
         `;
     }
+}
+
+// Mostrar notificación personalizada
+function showNotification(title, message, isError = false) {
+    const modal = document.getElementById('paymentModal');
+    const modalContent = document.getElementById('modalContent');
+    if (!modal || !modalContent) return;
+
+    const iconClass = isError ? 'bi-exclamation-circle text-danger' : 'bi-check-circle text-success';
+    const titleClass = isError ? 'text-danger' : 'text-primary';
+
+    modalContent.innerHTML = `
+        <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
+        <div class="p-4 text-center">
+            <i class="bi ${iconClass} fs-1 mb-3 d-block"></i>
+            <h3 class="${titleClass} fw-bold mb-3">${title}</h3>
+            <p class="text-secondary mb-4">${message}</p>
+            <button class="btn-confirm-modern w-100 py-3 fw-bold rounded-4 shadow-sm text-uppercase" onclick="closePaymentModal()">
+                Entendido
+            </button>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
 }
 
 // Cerrar modal
@@ -615,7 +654,7 @@ async function saveReservationToStorage(reservation) {
             return true;
         } catch (localError) {
             console.error("Error fatal: No se pudo guardar ni en Firestore ni localmente", localError);
-            alert("Error al guardar la reserva. Por favor intenta de nuevo.");
+            showNotification('Error Crítico', "Error al guardar la reserva. Por favor intenta de nuevo.", true);
             throw localError;
         }
     }
