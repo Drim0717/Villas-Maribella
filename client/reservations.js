@@ -33,11 +33,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Event listeners para navegación del calendario
     document.getElementById('prevMonth').addEventListener('click', () => {
+        currentMonth.setDate(1); // Fijar al día 1 antes de cambiar mes
         currentMonth.setMonth(currentMonth.getMonth() - 1);
         renderCalendar();
     });
 
     document.getElementById('nextMonth').addEventListener('click', () => {
+        currentMonth.setDate(1); // Fijar al día 1 antes de cambiar mes
         currentMonth.setMonth(currentMonth.getMonth() + 1);
         renderCalendar();
     });
@@ -582,9 +584,14 @@ async function executePayment(method) {
                     <p><strong>Total:</strong> $${total.toFixed(2)} USD</p>
                 </div>
                 <p class="email-notice">📧 Hemos enviado un correo con los detalles</p>
-                <button class="confirm-btn" onclick="closePaymentModal(); resetForm();">Aceptar</button>
+                <button class="confirm-btn" onclick="location.reload()">Aceptar</button>
             </div>
         `;
+
+        // Auto-reload después de 3 segundos
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
     } catch (error) {
         console.error("Error CRÍTICO en executePayment:", error);
         modalContent.innerHTML = `
