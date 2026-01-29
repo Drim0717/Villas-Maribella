@@ -55,7 +55,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     const modal = document.getElementById('paymentModal');
     if (modal) {
         modal.addEventListener('click', function (e) {
-            if (e.target === this) {
+            const modalContent = document.getElementById('modalContent');
+            // Si el click NO fue dentro del contenido del modal, cerrar
+            if (modalContent && !modalContent.contains(e.target)) {
                 closePaymentModal();
             }
         });
@@ -276,10 +278,9 @@ function selectDate(date) {
     } else if (date > selectedCheckIn) {
         // Segunda selección (check-out)
         // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
-        // VALIDACIÓN: Verificar si hay fechas bloqueadas en el rango
         if (!isRangeAvailable(selectedCheckIn, date)) {
-            showNotification('Rango No Disponible', 'No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas. Por favor elige otro periodo.', true);
             resetForm();
+            showNotification('Rango No Disponible', 'No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas. Por favor elige otro periodo.', true);
             return;
         }
 
