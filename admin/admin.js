@@ -235,8 +235,11 @@ function loadReservationsTable() {
 
     // Mapeo de IDs viejos a nuevos para consistencia visual
     const villaMapping = {
-        '1': '1A', '2': '2B', '3': '3D',
-        '4': '4E', '5': '5F', '6': '6G'
+        '1': 'B-1', '2': 'C-1', '3': 'D-1',
+        '4': 'AA-1', '5': 'AB-1', '6': 'AF-1',
+        '1A': 'B-1', '2B': 'C-1', '3C': 'D-1',
+        '4D': 'AA-1', '5E': 'AB-1', '6F': 'AF-1',
+        '6G': 'AF-1'
     };
 
     reservations.forEach(reservation => {

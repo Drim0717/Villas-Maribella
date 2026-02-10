@@ -1,17 +1,18 @@
 // ============================================
 // SISTEMA DE RESERVAS - VILLAS MARIBELLA
 // ============================================
+import CONFIG from './config.js';
 
 const VILLA_CONFIG = {
-    '1A': { price: 55, maxGuests: 2, name: 'Villa #1A' },
-    '2B': { price: 55, maxGuests: 2, name: 'Villa #2B' },
-    '3C': { price: 55, maxGuests: 2, name: 'Villa #3C' },
-    '4D': { price: 85, maxGuests: 4, name: 'Villa #4D' },
-    '5E': { price: 85, maxGuests: 4, name: 'Villa #5E' },
-    '6F': { price: 85, maxGuests: 4, name: 'Villa #6F' }
+    'B-1': { price: 55, maxGuests: 2, name: 'Villa B-1' },
+    'C-1': { price: 55, maxGuests: 2, name: 'Villa C-1' },
+    'D-1': { price: 55, maxGuests: 2, name: 'Villa D-1' },
+    'AA-1': { price: 85, maxGuests: 4, name: 'Villa AA-1' },
+    'AB-1': { price: 85, maxGuests: 4, name: 'Villa AB-1' },
+    'AF-1': { price: 85, maxGuests: 4, name: 'Villa AF-1' }
 };
 
-let currentVillaId = '1A';
+let currentVillaId = 'B-1';
 let numGuests = 2; // Initial state
 let selectedCheckIn = null;
 let selectedCheckOut = null;
@@ -33,13 +34,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Event listeners para navegación del calendario
     document.getElementById('prevMonth').addEventListener('click', () => {
-        currentMonth.setDate(1); // Fijar al día 1 antes de cambiar mes
+        currentMonth.setDate(1);
         currentMonth.setMonth(currentMonth.getMonth() - 1);
         renderCalendar();
     });
 
     document.getElementById('nextMonth').addEventListener('click', () => {
-        currentMonth.setDate(1); // Fijar al día 1 antes de cambiar mes
+        currentMonth.setDate(1);
         currentMonth.setMonth(currentMonth.getMonth() + 1);
         renderCalendar();
     });
@@ -549,8 +550,8 @@ async function executePayment(method) {
 
         console.log("Guardado exitoso!");
 
-        // Intentar enviar correo (backend local)
-        fetch('http://localhost:3000/api/send-email', {
+        // Intentar enviar correo (backend)
+        fetch(`${CONFIG.API_URL}/api/send-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -717,18 +718,17 @@ function getBlockedDatesFromStorage() {
 // VILLA GALLERY FUNCTIONALITY
 // ============================================
 
-// Villa images mapping
 const villaImages = {
-    '1A': ['../images/sala.jpg', '../images/cocina.jpg', '../images/bano.jpg'],
-    '2B': ['../images/cocina.jpg', '../images/sala.jpg', '../images/bano.jpg'],
-    '3C': ['../images/bano.jpg', '../images/sala.jpg', '../images/cocina.jpg'],
-    '4D': ['../images/sala.jpg', '../images/bano.jpg', '../images/cocina.jpg'],
-    '5E': ['../images/cocina.jpg', '../images/bano.jpg', '../images/sala.jpg'],
-    '6F': ['../images/bano.jpg', '../images/cocina.jpg', '../images/sala.jpg']
+    'B-1': ['../images/villas/B-1/sala.jpg', '../images/villas/B-1/cocina.jpg', '../images/villas/B-1/bano.jpg'],
+    'C-1': ['../images/villas/C-1/sala.jpg', '../images/villas/C-1/cocina.jpg', '../images/villas/C-1/bano.jpg'],
+    'D-1': ['../images/villas/D-1/sala.jpg', '../images/villas/D-1/cocina.jpg', '../images/villas/D-1/bano.jpg'],
+    'AA-1': ['../images/villas/AA-1/sala.jpg', '../images/villas/AA-1/cocina.jpg', '../images/villas/AA-1/bano.jpg'],
+    'AB-1': ['../images/villas/AB-1/sala.jpg', '../images/villas/AB-1/cocina.jpg', '../images/villas/AB-1/bano.jpg'],
+    'AF-1': ['../images/villas/AF-1/sala.jpg', '../images/villas/AF-1/cocina.jpg', '../images/villas/AF-1/bano.jpg']
 };
 
 let currentVillaImageIndex = 0;
-let currentVillaNumber = '1A'; // Changed to string to match VILLA_CONFIG keys
+let currentVillaNumber = 'B-1'; // Changed to string to match VILLA_CONFIG keys
 
 // Initialize villa gallery
 document.addEventListener('DOMContentLoaded', function () {
@@ -765,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Initialize the first villa display
-    selectVilla('1A'); // Use the first villa code
+    selectVilla('B-1'); // Use the first villa code
 });
 
 // Select villa and update display

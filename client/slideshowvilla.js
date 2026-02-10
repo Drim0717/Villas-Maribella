@@ -4,10 +4,10 @@
 
 // Array de imágenes para el slideshow
 const heroImages = [
-    '../images/villa_hero.jpg',
-    '../images/piscina_dia.jpg',
-    '../images/piscina_noche.png',
-    '../images/sala.jpg'
+    '../images/Principal/villa_hero.jpg',
+    '../images/Principal/piscina_dia.jpg',
+    '../images/Principal/piscina_noche.png',
+    '../images/Principal/sala.jpg'
 ];
 
 let currentImageIndex = 0;

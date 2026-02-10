@@ -133,7 +133,7 @@ h4,
    HERO SECTION PREMIUM
    ============================================ */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url('images/villa_hero.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url('images/Principal/villa_hero.jpg');
     background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
@@ -529,7 +529,7 @@ h4,
 .hero {
     height: 100vh;
     background: linear-gradient(100deg, rgba(0, 180, 216, 0.4) 0%, rgba(0, 119, 182, 0.3) 100%),
-        url('images/villa_hero.jpg');
+        url('images/Principal/villa_hero.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -636,7 +636,7 @@ section {
    ============================================ */
 .about {
     background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-        url('images/piscina_noche.png');
+        url('images/Principal/piscina_noche.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -683,7 +683,7 @@ section {
    ============================================ */
 .features {
     background: linear-gradient(rgba(248, 249, 250, 0.8), rgba(248, 249, 250, 0.8)),
-        url('images/piscina_dia.jpg');
+        url('images/Principal/piscina_dia.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -728,7 +728,7 @@ section {
    ============================================ */
 .gallery {
     background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-        url('images/sala.jpg');
+        url('images/Principal/sala.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -765,7 +765,7 @@ section {
    ============================================ */
 .contact {
     background: linear-gradient(rgba(0, 180, 216, 0.8), rgba(0, 119, 182, 0.8)),
-        url('images/cocina.jpg');
+        url('images/Principal/cocina.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
