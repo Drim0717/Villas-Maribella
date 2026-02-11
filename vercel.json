@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "rewrites": [
     {
@@ -14,3 +15,62 @@
     }
   ]
 }
+||||||| parent of eb70a50 (Forzar inclusion de vercel.json para deploy)
+=======
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/client/index.html"
+    },
+    {
+      "source": "/reservations.js",
+      "destination": "/client/reservations.js"
+    },
+    {
+      "source": "/navigation.js",
+      "destination": "/client/navigation.js"
+    },
+    {
+      "source": "/config.js",
+      "destination": "/client/config.js"
+    },
+    {
+      "source": "/firebase-config.js",
+      "destination": "/client/firebase-config.js"
+    },
+    {
+      "source": "/mobile-menu.js",
+      "destination": "/client/mobile-menu.js"
+    },
+    {
+      "source": "/payment-integrations.js",
+      "destination": "/client/payment-integrations.js"
+    },
+    {
+      "source": "/slideshowvilla.js",
+      "destination": "/client/slideshowvilla.js"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/admin.html"
+    },
+    {
+      "source": "/admin.html",
+      "destination": "/admin/admin.html"
+    },
+    {
+      "source": "/admin.js",
+      "destination": "/admin/admin.js"
+    },
+    {
+      "source": "/admin.css",
+      "destination": "/admin/admin.css"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}
+>>>>>>> eb70a50 (Forzar inclusion de vercel.json para deploy)
