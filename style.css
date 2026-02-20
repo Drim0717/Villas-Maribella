@@ -5,6 +5,7 @@
 
 /* ============================================
    VARIABLES CSS - COLORES VIBRANTES & LUJO
+   (Consolidado: eliminadas variables duplicadas)
    ============================================ */
 :root {
     --tropical-blue: #00B4D8;
@@ -12,10 +13,18 @@
     --turquoise: #48CAE4;
     --cyan-vibrant: #00C2FF;
     --sand-beige: #F4E4C1;
+    --coral-accent: #FF6B6B;
+    --palm-green: #2D6A4F;
     --white: #FFFFFF;
     --light-gray: #F1F3F5;
-    --dark-text: #1a1a1a;
+    --dark-text: #2B2D42;
+    --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(0, 180, 216, 0.9) 0%, rgba(0, 119, 182, 0.8) 100%);
     --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Fluid Spacing & Sizes */
+    --container-padding: clamp(1rem, 5vw, 2rem);
+    --section-gap: clamp(3rem, 8vw, 5rem);
 }
 
 /* ============================================
@@ -27,12 +36,8 @@ body {
     background-color: var(--light-gray);
 }
 
-h1,
-h2,
-h3,
-h4,
-.display-3,
-.display-5 {
+h1, h2, h3, h4,
+.display-3, .display-5 {
     font-family: 'Playfair Display', serif;
 }
 
@@ -59,12 +64,22 @@ h4,
 .btn-outline-primary {
     color: var(--tropical-blue);
     border-color: var(--tropical-blue);
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 600;
+    margin-top: auto;
+    transition: all 0.3s;
 }
 
 .btn-outline-primary:hover,
 .btn-outline-primary.active {
     background-color: var(--tropical-blue);
     border-color: var(--tropical-blue);
+    color: white;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
 }
 
 /* ============================================
@@ -125,20 +140,37 @@ h4,
     color: var(--cyan-vibrant) !important;
 }
 
-.transition-all {
-    transition: all 0.3s ease;
-}
-
 /* ============================================
    HERO SECTION PREMIUM
+   (Consolidado: eliminadas reglas duplicadas)
    ============================================ */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url('images/Principal/villa_hero.jpg');
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
     height: 100vh;
+    background: linear-gradient(100deg, rgba(0, 180, 216, 0.4) 0%, rgba(0, 119, 182, 0.3) 100%),
+        url('images/Principal/villa_hero.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    position: relative;
     width: 100%;
+    animation: zoomInOut 20s infinite;
+}
+
+@keyframes zoomInOut {
+    0%, 100% { background-size: 100%; }
+    50% { background-size: 110%; }
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 2rem;
+    animation: fadeInUp 1s ease;
 }
 
 .hero-title {
@@ -148,6 +180,15 @@ h4,
     text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    line-height: 1.1;
+}
+
 .hero-subtitle {
     font-size: clamp(1rem, 3vw, 1.4rem);
     font-weight: 300;
@@ -155,6 +196,19 @@ h4,
     margin: 0 auto;
     opacity: 0.95;
     letter-spacing: 0.5px;
+}
+
+.hero p {
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+    pointer-events: none;
 }
 
 .btn-cyan {
@@ -172,6 +226,46 @@ h4,
 }
 
 /* ============================================
+   SECCIONES GENERALES
+   ============================================ */
+section {
+    padding: 5rem 2rem;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================
+   ABOUT SECTION
+   ============================================ */
+.about-image-wrapper {
+    transition: transform 0.5s ease;
+}
+
+.about-image-wrapper:hover {
+    transform: scale(1.02);
+}
+
+/* ============================================
    CARDS & HOVER EFFECTS
    ============================================ */
 .hover-card {
@@ -181,13 +275,92 @@ h4,
 .hover-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
-    /* Bootstrap shadow-lg equiv */
+}
+
+/* Villa cards (gallery/listing) */
+.villa-card {
+    background: var(--white);
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.villa-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.villa-image-container {
+    height: 280px !important;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.villa-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s ease;
+}
+
+.villa-card:hover .villa-image-container img {
+    transform: scale(1.08);
+}
+
+.card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--deep-ocean);
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.villa-features span {
+    display: inline-block;
+    background: var(--light-gray);
+    color: var(--dark-text);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 /* ============================================
    GALLERY
    ============================================ */
+.gallery-item {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    cursor: pointer;
+}
+
 .gallery-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
     transition: transform 0.5s ease;
 }
 
@@ -196,7 +369,8 @@ h4,
 }
 
 /* ============================================
-   CONTACT & CALENDAR - CLEAN STYLE
+   CONTACT & CALENDAR SECTION
+   (Consolidado: eliminados duplicados)
    ============================================ */
 .contact-section {
     background: var(--white) !important;
@@ -217,11 +391,10 @@ h4,
     margin: 0 auto;
 }
 
-/* Villa Selection Cards - Vertical & Robust (New 2x2 Design) */
+/* Villa Selection Grid */
 .villa-selector-grid-custom {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    /* Force 2 columns for better symmetry in the 50% container */
     gap: 1.2rem;
     padding: 0.5rem;
 }
@@ -236,7 +409,6 @@ h4,
     display: flex !important;
     flex-direction: column;
     align-items: center;
-    /* Centered content for a more balanced look */
     text-align: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     cursor: pointer;
@@ -269,7 +441,7 @@ h4,
     font-weight: 500;
 }
 
-/* Galería y Componentes Premium */
+/* Villa Gallery & Premium Components */
 .villa-gallery-container {
     background: #000;
     overflow: hidden;
@@ -297,1059 +469,15 @@ h4,
     scale: 1.1;
 }
 
-.gallery-nav-btn.prev {
-    left: 1rem;
-}
-
-.gallery-nav-btn.next {
-    right: 1rem;
-}
-
-/* Resumen Premium */
-.summary-box-premium {
-    background: linear-gradient(135deg, var(--deep-ocean), var(--primary-accent)) !important;
-}
-
-/* Botones y Contadores */
-.btn-confirm-modern {
-    background: var(--cyan-vibrant);
-    color: white;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.btn-confirm-modern:hover {
-    background: #009ecc;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 183, 255, 0.3);
-}
-
-.btn-counter-mini {
-    width: 32px;
-    height: 32px;
-    border-radius: 50% !important;
-    background: white !important;
-    border: 1px solid #ddd !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-    font-weight: bold !important;
-    color: var(--primary-accent) !important;
-}
-
-.btn-counter-mini:hover {
-    background: var(--primary-accent) !important;
-    color: white !important;
-}
-
-.legend-box {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    display: inline-block;
-}
-
-.legend-box.available {
-    background: #28a745;
-}
-
-.legend-box.reserved {
-    background: #ffc107;
-}
-
-.legend-box.selected {
-    background: var(--cyan-vibrant);
-}
-
-/* Custom Calendar Grid within Bootstrap structure */
-.calendar-grid-bootstrap {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: default;
-    background-color: #f8f9fa;
-    transition: all 0.2s;
-}
-
-.calendar-day.empty {
-    background: transparent;
-}
-
-.calendar-day.available {
-    background-color: white;
-    border: 1px solid #eee;
-    color: var(--dark-text);
-    cursor: pointer;
-}
-
-.calendar-day.available:hover {
-    background-color: #f1faff;
-    border-color: var(--cyan-vibrant);
-    color: var(--cyan-vibrant);
-}
-
-.calendar-day.reserved {
-    background-color: #fff3cd;
-    color: #856404;
-    text-decoration: line-through;
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.calendar-day.selected {
-    background-color: var(--cyan-vibrant) !important;
-    color: white !important;
-    border: none !important;
-    box-shadow: 0 4px 10px rgba(0, 194, 255, 0.3);
-}
-
-.calendar-day.in-range {
-    background-color: rgba(0, 180, 216, 0.3);
-}
-
-.calendar-day.past {
-    background-color: #e9ecef;
-    color: #adb5bd;
-}
-
-.calendar-day-header {
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.75rem;
-    color: #999;
-    text-transform: lowercase;
-    padding-bottom: 0.8rem;
-}
-
-/* Reservation Summary Card - The "Blue Header" look */
-.reservation-summary-card {
-    border-radius: 20px !important;
-    overflow: hidden;
-    border: none !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08) !important;
-}
-
-.summary-header {
-    background: var(--deep-ocean);
-    color: white;
-    padding: 2rem;
-}
-
-.summary-header h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-}
-
-.summary-body {
-    padding: 2rem;
-    background: white;
-}
-
-.form-control,
-.form-select {
-    border: 1px solid #eee !important;
-    border-radius: 12px !important;
-    padding: 1rem !important;
-    font-size: 0.95rem !important;
-    color: var(--dark-text) !important;
-    transition: var(--transition);
-}
-
-.form-control:focus,
-.form-select:focus {
-    border-color: var(--turquoise) !important;
-    box-shadow: 0 0 0 4px rgba(72, 202, 228, 0.1) !important;
-}
-
-.btn-confirm-booking {
-    background: var(--cyan-vibrant) !important;
-    color: white !important;
-    border-radius: 50px !important;
-    padding: 1.2rem !important;
-    font-weight: 700 !important;
-    text-transform: none !important;
-    letter-spacing: 0.5px;
-    border: none !important;
-}
-
-.btn-confirm-booking:hover {
-    background: var(--deep-ocean) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 194, 255, 0.3) !important;
-}
+.gallery-nav-btn.prev { left: 1rem; }
+.gallery-nav-btn.next { right: 1rem; }
 
 /* ============================================
-   ANIMATION
+   SUMMARY BOX PREMIUM
+   (Consolidado: eliminado duplicado)
    ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-:root {
-    --deep-ocean: #0077B6;
-    --turquoise: #48CAE4;
-    --sand-beige: #F4E4C1;
-    --coral-accent: #FF6B6B;
-    --palm-green: #2D6A4F;
-    --white: #FFFFFF;
-    --light-gray: #F8F9FA;
-    --dark-text: #2B2D42;
-    --gradient-primary: linear-gradient(135deg, #00B4D8 0%, #0077B6 100%);
-    --gradient-hero: linear-gradient(135deg, rgba(0, 180, 216, 0.9) 0%, rgba(0, 119, 182, 0.8) 100%);
-
-    /* Fluid Spacing & Sizes */
-    --container-padding: clamp(1rem, 5vw, 2rem);
-    --section-gap: clamp(3rem, 8vw, 5rem);
-}
-
-/* ============================================
-   SECCIÓN HERO - PANTALLA COMPLETA
-   ============================================ */
-.hero {
-    height: 100vh;
-    background: linear-gradient(100deg, rgba(0, 180, 216, 0.4) 0%, rgba(0, 119, 182, 0.3) 100%),
-        url('images/Principal/villa_hero.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--white);
-    position: relative;
-    animation: zoomInOut 20s infinite;
-}
-
-@keyframes zoomInOut {
-
-    0%,
-    100% {
-        background-size: 100%;
-    }
-
-    50% {
-        background-size: 110%;
-    }
-}
-
-.hero-content {
-    max-width: 800px;
-    padding: 2rem;
-    animation: fadeInUp 1s ease;
-}
-
-.hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    /* Fluir entre 2.5rem y 5rem */
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-    line-height: 1.1;
-}
-
-.hero p {
-    font-size: clamp(1.1rem, 2vw, 1.5rem);
-    margin-bottom: 2rem;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
-}
-
-.cta-button {
-    display: inline-block;
-    padding: 1rem 3rem;
-    background: var(--white);
-    color: var(--tropical-blue);
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.cta-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    background: var(--sand-beige);
-}
-
-/* ============================================
-   SECCIONES GENERALES
-   ============================================ */
-section {
-    padding: 5rem 2rem;
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 90%;
-    /* Mejor control en móviles */
-}
-
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 1rem;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.section-subtitle {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 3rem;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* ============================================
-   SECCIÓN ACERCA DE
-   ============================================ */
-.about {
-    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-        url('images/Principal/piscina_noche.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-.about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
-}
-
-.about-text h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
-    color: var(--tropical-blue);
-    margin-bottom: 1rem;
-}
-
-.about-text p {
-    margin-bottom: 1rem;
-    line-height: 1.8;
-}
-
-.about-image {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-}
-
-.about-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-    transition: transform 0.5s ease;
-}
-
-.about-image:hover img {
-    transform: scale(1.05);
-}
-
-/* ============================================
-   CARACTERÍSTICAS - GRID DE TARJETAS
-   ============================================ */
-.features {
-    background: linear-gradient(rgba(248, 249, 250, 0.8), rgba(248, 249, 250, 0.8)),
-        url('images/Principal/piscina_dia.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-.features-grid {
-    display: grid;
-    /* Auto-fill llena el espacio disponible de forma inteligente */
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.feature-card {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: 15px;
-    text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 180, 216, 0.2);
-}
-
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.feature-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem;
-    color: var(--deep-ocean);
-    margin-bottom: 0.5rem;
-}
-
-/* ============================================
-   GALERÍA
-   ============================================ */
-.gallery {
-    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-        url('images/Principal/sala.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-}
-
-.gallery-item {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-    cursor: pointer;
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.gallery-item:hover img {
-    transform: scale(1.1);
-}
-
-/* ============================================
-   CONTACTO
-   ============================================ */
-.contact {
-    background: linear-gradient(rgba(0, 180, 216, 0.8), rgba(0, 119, 182, 0.8)),
-        url('images/Principal/cocina.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: var(--white);
-}
-
-.contact .section-title {
-    -webkit-text-fill-color: var(--white);
-}
-
-.contact .section-subtitle {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.contact-form {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #2B2D42;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 150px;
-}
-
-.submit-button {
-    width: 100%;
-    padding: 1rem;
-    background: var(--white);
-    color: var(--tropical-blue);
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.submit-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    background: var(--sand-beige);
-}
-
-/* ============================================
-   FOOTER
-   ============================================ */
-.footer {
-    background: var(--dark-text);
-    color: var(--white);
-    text-align: center;
-    padding: 3rem 2rem;
-}
-
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-.social-links a {
-    color: var(--white);
-    font-size: 1.2rem;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    transition: all 0.3s ease;
-}
-
-.social-links a:hover {
-    color: var(--turquoise);
-    transform: translateY(-3px);
-}
-
-/* ============================================
-   ANIMACIONES
-   ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    .hero p {
-        font-size: 1.1rem;
-    }
-
-    .nav-links {
-        gap: 1rem;
-        font-size: 0.9rem;
-    }
-
-    .about-content {
-        grid-template-columns: 1fr;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .reservation-container {
-        flex-direction: column;
-    }
-
-    .calendar-section,
-    .booking-section {
-        min-width: 100%;
-    }
-
-    .villa-display {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-
-    .villa-images {
-        width: 100%;
-        order: -1;
-    }
-
-    .villa-images {
-        height: 250px;
-    }
-
-    .villa-gallery-title {
-        font-size: 1.5rem;
-    }
-}
-
-
-/* ============================================
-   GALERÍA DE VILLAS 
-   ============================================ */
-.villa-gallery-section {
-    background: var(--white);
-    padding: 2.5rem;
-    border-radius: 20px;
-    margin-bottom: 3rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-}
-
-.villa-gallery-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: var(--tropical-blue);
-    text-align: center;
-    margin-bottom: 0.5rem;
-}
-
-.villa-gallery-subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-/* Redundant villa selection styles removed to favor consolidated section at line 220 */
-
-.villa-display {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.villa-images {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    height: 350px;
-    position: relative;
-}
-
-.villa-images img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease, opacity 0.3s ease;
-}
-
-.villa-images:hover img {
-    transform: scale(1.05);
-}
-
-.image-nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    font-size: 2rem;
-    color: var(--tropical-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-.image-nav-btn:hover {
-    background: var(--tropical-blue);
-    color: var(--white);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.prev-btn {
-    left: 15px;
-}
-
-.next-btn {
-    right: 15px;
-}
-
-.image-indicator {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    color: var(--white);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    z-index: 10;
-}
-
-
-.villa-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.villa-info h4 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: var(--deep-ocean);
-    margin-bottom: 1rem;
-}
-
-.villa-description {
-    color: #666;
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-}
-
-.villa-amenities {
-    background: var(--light-gray);
-    padding: 1.5rem;
-    border-radius: 15px;
-    border-left: 4px solid var(--tropical-blue);
-}
-
-.villa-amenities h5 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem;
-    color: var(--deep-ocean);
-    margin-bottom: 1rem;
-}
-
-.amenities-list {
-    list-style: none;
-    padding: 0;
-}
-
-.amenities-list li {
-    padding: 0.5rem 0;
-    color: var(--dark-text);
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.amenity-icon {
-    font-size: 1.3rem;
-    width: 30px;
-    display: inline-block;
-}
-
-/* ============================================
-   SISTEMA DE RESERVAS - CALENDARIO
-   ============================================ */
-.reservation-container {
-    display: flex;
-    gap: 3rem;
-    margin-top: 3rem;
-    align-items: flex-start;
-}
-
-.calendar-section {
-    flex: 1;
-    min-width: 300px;
-    /* Reduced from 400px to prevent overflow on small screens */
-    background: var(--white);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 500px) {
-    .calendar-section {
-        padding: 1rem;
-        /* Less padding on mobile */
-        min-width: 100%;
-    }
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.calendar-header h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    color: var(--tropical-blue);
-    text-transform: capitalize;
-}
-
-.month-nav {
-    background: var(--tropical-blue);
-    color: var(--white);
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.month-nav:hover {
-    background: var(--deep-ocean);
-    transform: scale(1.1);
-}
-
-.calendar-villa-indicator {
-    text-align: center;
-    padding: 0.75rem 1rem;
-    margin: 1rem 0;
-    background: rgba(0, 180, 216, 0.1);
-    border-radius: 10px;
-    color: var(--deep-ocean);
-    font-size: 0.95rem;
-    border-left: 4px solid var(--tropical-blue);
-}
-
-.calendar-villa-indicator strong {
-    color: var(--tropical-blue);
-    font-weight: 700;
-}
-
-.calendar-grid,
-.calendar-grid-bootstrap {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    /* Default gap */
-}
-
-/* Ajustes Responsive para el Calendario */
-@media (max-width: 480px) {
-
-    .calendar-grid,
-    .calendar-grid-bootstrap {
-        gap: 2px !important;
-    }
-}
-
-.calendar-day-header {
-    text-align: center;
-    font-weight: 600;
-    color: var(--deep-ocean);
-    padding: 5px;
-    /* Reduced specific padding */
-    font-size: 0.9rem;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 600;
-    border: 2px solid transparent;
-    color: #2B2D42;
-    background: #fff;
-    font-size: 0.9rem;
-    /* Default size */
-}
-
-@media (max-width: 480px) {
-    .calendar-day {
-        font-size: 0.75rem;
-        /* Smaller text on mobile */
-        aspect-ratio: 1;
-        /* Keep square */
-        height: auto;
-    }
-}
-
-.calendar-day:not(.empty):not(.past):not(.reserved):hover {
-    background: var(--turquoise);
-    color: var(--white);
-    transform: scale(1.05);
-}
-
-.calendar-day.empty {
-    cursor: default;
-}
-
-.calendar-day.past {
-    color: #999;
-    cursor: not-allowed;
-    background: #f5f5f5;
-}
-
-.calendar-day.reserved {
-    background: #ffebee;
-    color: #d32f2f;
-    cursor: not-allowed;
-    position: relative;
-}
-
-.calendar-day.reserved::after {
-    content: '✕';
-    position: absolute;
-    font-size: 0.7rem;
-}
-
-.calendar-day.selected {
-    background: var(--tropical-blue);
-    color: #fff;
-    border-color: var(--deep-ocean);
-    font-weight: 700;
-}
-
-.calendar-day.in-range {
-    background: rgba(0, 180, 216, 0.2);
-    color: #2B2D42;
-    font-weight: 600;
-}
-
-.calendar-legend {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e0e0e0;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: #2B2D42;
-}
-
-.legend-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-}
-
-.legend-box.available {
-    background: var(--white);
-    border: 2px solid var(--tropical-blue);
-}
-
-.legend-box.reserved {
-    background: #ffebee;
-}
-
-.legend-box.selected {
-    background: var(--tropical-blue);
-}
-
-/* ============================================
-   FORMULARIO DE RESERVA
-   ============================================ */
-.booking-section {
-    flex: 1;
-    min-width: 350px;
-}
-
-.reservation-form {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.reservation-form h3 {
-    font-family: 'Playfair Display', serif;
-    color: var(--tropical-blue);
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.form-group select {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    background: var(--white);
-    color: var(--dark-text);
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.form-group select:focus {
-    outline: none;
-    border-color: var(--tropical-blue);
-    box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
-}
-
-.form-group select:hover {
-    border-color: var(--turquoise);
-}
-
-
 .summary-box-premium {
     background: #0077B6 !important;
-    /* Fallback para navegadores antiguos */
     background: linear-gradient(135deg, #0077B6 0%, #00B4D8 100%) !important;
     padding: 1.5rem !important;
     border-radius: 20px !important;
@@ -1404,8 +532,163 @@ section {
     font-weight: 500 !important;
 }
 
+/* Buttons & Counters */
+.btn-confirm-modern {
+    background: var(--cyan-vibrant);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
 
-/* Replaced by summary-box-premium styles above */
+.btn-confirm-modern:hover {
+    background: #009ecc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 183, 255, 0.3);
+}
+
+.btn-counter-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50% !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    font-weight: bold !important;
+    color: var(--cyan-vibrant) !important;
+}
+
+.btn-counter-mini:hover {
+    background: var(--cyan-vibrant) !important;
+    color: white !important;
+}
+
+/* ============================================
+   CALENDAR
+   (Consolidado: eliminados duplicados)
+   ============================================ */
+.calendar-grid,
+.calendar-grid-bootstrap {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #999;
+    text-transform: lowercase;
+    padding-bottom: 0.8rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: default;
+    background-color: #f8f9fa;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    color: var(--dark-text);
+}
+
+.calendar-day.empty {
+    background: transparent;
+    cursor: default;
+}
+
+.calendar-day.available {
+    background-color: white;
+    border: 1px solid #eee;
+    color: var(--dark-text);
+    cursor: pointer;
+}
+
+.calendar-day.available:hover {
+    background-color: #f1faff;
+    border-color: var(--cyan-vibrant);
+    color: var(--cyan-vibrant);
+}
+
+.calendar-day:not(.empty):not(.past):not(.reserved):hover {
+    background: var(--turquoise);
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+.calendar-day.reserved {
+    background-color: #fff3cd;
+    color: #856404;
+    text-decoration: line-through;
+    opacity: 0.6;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.calendar-day.reserved::after {
+    content: '✕';
+    position: absolute;
+    font-size: 0.7rem;
+}
+
+.calendar-day.selected {
+    background-color: var(--cyan-vibrant) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(0, 194, 255, 0.3);
+    font-weight: 700;
+}
+
+.calendar-day.in-range {
+    background-color: rgba(0, 180, 216, 0.3);
+    color: var(--dark-text);
+    font-weight: 600;
+}
+
+.calendar-day.past {
+    background-color: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+/* Calendar legend */
+.legend-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.legend-box.available { background: #28a745; }
+.legend-box.reserved { background: #ffc107; }
+.legend-box.selected { background: var(--cyan-vibrant); }
+
+/* ============================================
+   FORM CONTROLS (Bootstrap override)
+   ============================================ */
+.form-control,
+.form-select {
+    border: 1px solid #eee !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    font-size: 0.95rem !important;
+    color: var(--dark-text) !important;
+    transition: var(--transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--turquoise) !important;
+    box-shadow: 0 0 0 4px rgba(72, 202, 228, 0.1) !important;
+}
 
 /* ============================================
    MODAL DE PAGO
@@ -1424,13 +707,11 @@ section {
     backdrop-filter: blur(8px);
     animation: fadeIn 0.3s ease;
     overflow-y: auto;
-    /* Permite scroll si el contenido es largo */
     padding: 20px;
 }
 
 body.modal-open {
     overflow: hidden;
-    /* Bloquea el scroll de la página de fondo */
 }
 
 .modal-dialog {
@@ -1439,7 +720,6 @@ body.modal-open {
     max-width: 500px;
     width: 100%;
     margin: auto;
-    /* Centrado vertical con overflow-y auto en el padre */
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
     animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -1541,6 +821,7 @@ body.modal-open {
     background: #e0e0e0;
 }
 
+/* Payment states */
 .payment-processing {
     text-align: center;
     padding: 2rem;
@@ -1556,9 +837,7 @@ body.modal-open {
     margin: 0 auto 1.5rem;
 }
 
-.payment-success {
-    text-align: center;
-}
+.payment-success { text-align: center; }
 
 .success-icon {
     width: 80px;
@@ -1612,151 +891,78 @@ body.modal-open {
 }
 
 /* ============================================
-   ANIMACIONES ADICIONALES
+   FOOTER
    ============================================ */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+.footer {
+    background: var(--dark-text);
+    color: var(--white);
+    text-align: center;
+    padding: 3rem 2rem;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes scaleIn {
-    from {
-        transform: scale(0);
-    }
-
-    to {
-        transform: scale(1);
-    }
-}
-
-/* ============================================
-   Ajustes de Galería de Villas (PC & Mobile)
-   ============================================ */
-.villa-card {
-    background: var(--white);
-    border: none;
-    border-radius: 16px;
-    /* Bordes muy redondeados */
-    overflow: hidden;
-    /* Asegura que nada se salga de los bordes */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    /* Sombra suave y moderna */
+.social-links a {
+    color: var(--white);
+    font-size: 1.2rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
     transition: all 0.3s ease;
-    height: 100%;
-    /* Altura completa para alinear en grid */
-    display: flex;
-    flex-direction: column;
 }
 
-/* Efecto al pasar el mouse por la tarjeta */
-.villa-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-}
-
-/* Contenedor de la imagen (El marco) */
-.villa-image-container {
-    height: 280px !important;
-    /* Altura fija equilibrada */
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-/* La imagen en sí (El arreglo del corte) */
-.villa-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* CLAVE: Rellena el hueco sin estirarse */
-    object-position: center;
-    /* Centra la imagen */
-    transition: transform 0.6s ease;
-}
-
-/* Zoom suave en la imagen al hacer hover */
-.villa-card:hover .villa-image-container img {
-    transform: scale(1.08);
-}
-
-/* Cuerpo del texto de la tarjeta */
-.card-body {
-    padding: 1.5rem;
-    flex-grow: 1;
-    /* Empuja el botón al fondo si el texto es corto */
-    display: flex;
-    flex-direction: column;
-}
-
-.card-title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    color: var(--deep-ocean);
-    margin-bottom: 0.5rem;
-}
-
-.card-text {
-    color: #666;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-}
-
-/* Estilo de las etiquetas (ej. Capacidad, WiFi) */
-.villa-features span {
-    display: inline-block;
-    background: var(--light-gray);
-    color: var(--dark-text);
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    margin-right: 5px;
-    margin-bottom: 5px;
-}
-
-/* Botón de la tarjeta */
-.btn-outline-primary {
-    border-color: var(--tropical-blue);
-    color: var(--tropical-blue);
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-weight: 600;
-    margin-top: auto;
-    /* Empuja el botón siempre al final */
-    transition: all 0.3s;
-}
-
-.btn-outline-primary:hover {
-    background: var(--tropical-blue);
-    color: white;
-    border-color: var(--tropical-blue);
+.social-links a:hover {
+    color: var(--turquoise);
+    transform: translateY(-3px);
 }
 
 /* ============================================
-   ESTILOS ADICIONALES PARA CONTACTO
+   LIGHTBOX
+   ============================================ */
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+    z-index: 3001;
+    transition: transform 0.2s;
+}
+
+.close-lightbox:hover {
+    transform: scale(1.2);
+}
+
+/* ============================================
+   CONTACT SECTION DETAILS
    ============================================ */
 .contact-item {
     transition: var(--transition);
@@ -1774,16 +980,58 @@ body.modal-open {
     word-break: break-all;
 }
 
+/* ============================================
+   ANIMACIONES
+   (Consolidado: eliminadas duplicaciones)
+   ============================================ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    .hero p { font-size: 1.1rem; }
+    .section-title { font-size: 2rem; }
+}
+
 @media (max-width: 576px) {
-    .contact-item {
-        padding: 1.5rem !important;
+    .contact-item { padding: 1.5rem !important; }
+    .contact-item i { font-size: 2.5rem !important; }
+    .contact-item p { font-size: 1.1rem !important; }
+}
+
+@media (max-width: 480px) {
+    .calendar-grid,
+    .calendar-grid-bootstrap {
+        gap: 2px !important;
     }
 
-    .contact-item i {
-        font-size: 2.5rem !important;
-    }
-
-    .contact-item p {
-        font-size: 1.1rem !important;
+    .calendar-day {
+        font-size: 0.75rem;
+        aspect-ratio: 1;
+        height: auto;
     }
 }
