@@ -153,7 +153,6 @@ h4,
     background: url('images/Principal/villa_hero.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
@@ -162,7 +161,6 @@ h4,
     color: var(--white);
     position: relative;
     width: 100%;
-    animation: zoomInOut 20s infinite;
 }
 
 @keyframes zoomInOut {
@@ -215,10 +213,7 @@ h4,
 }
 
 .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
-    pointer-events: none;
+    display: none;
 }
 
 .btn-cyan {
