@@ -33,11 +33,15 @@
 body {
     font-family: 'Inter', sans-serif;
     color: var(--dark-text);
-    background-color: var(--light-gray);
+    background-color: var(--white);
 }
 
-h1, h2, h3, h4,
-.display-3, .display-5 {
+h1,
+h2,
+h3,
+h4,
+.display-3,
+.display-5 {
     font-family: 'Playfair Display', serif;
 }
 
@@ -146,8 +150,7 @@ h1, h2, h3, h4,
    ============================================ */
 .hero {
     height: 100vh;
-    background: linear-gradient(100deg, rgba(0, 180, 216, 0.4) 0%, rgba(0, 119, 182, 0.3) 100%),
-        url('images/Principal/villa_hero.jpg');
+    background: url('images/Principal/villa_hero.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -163,8 +166,15 @@ h1, h2, h3, h4,
 }
 
 @keyframes zoomInOut {
-    0%, 100% { background-size: 100%; }
-    50% { background-size: 110%; }
+
+    0%,
+    100% {
+        background-size: 100%;
+    }
+
+    50% {
+        background-size: 110%;
+    }
 }
 
 .hero-content {
@@ -469,8 +479,13 @@ section {
     scale: 1.1;
 }
 
-.gallery-nav-btn.prev { left: 1rem; }
-.gallery-nav-btn.next { right: 1rem; }
+.gallery-nav-btn.prev {
+    left: 1rem;
+}
+
+.gallery-nav-btn.next {
+    right: 1rem;
+}
 
 /* ============================================
    SUMMARY BOX PREMIUM
@@ -667,9 +682,17 @@ section {
     display: inline-block;
 }
 
-.legend-box.available { background: #28a745; }
-.legend-box.reserved { background: #ffc107; }
-.legend-box.selected { background: var(--cyan-vibrant); }
+.legend-box.available {
+    background: #28a745;
+}
+
+.legend-box.reserved {
+    background: #ffc107;
+}
+
+.legend-box.selected {
+    background: var(--cyan-vibrant);
+}
 
 /* ============================================
    FORM CONTROLS (Bootstrap override)
@@ -837,7 +860,9 @@ body.modal-open {
     margin: 0 auto 1.5rem;
 }
 
-.payment-success { text-align: center; }
+.payment-success {
+    text-align: center;
+}
 
 .success-icon {
     width: 80px;
@@ -985,45 +1010,88 @@ body.modal-open {
    (Consolidado: eliminadas duplicaciones)
    ============================================ */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(50px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes scaleIn {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
 }
 
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 @media (max-width: 768px) {
-    .hero h1 { font-size: 2.5rem; }
-    .hero p { font-size: 1.1rem; }
-    .section-title { font-size: 2rem; }
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 576px) {
-    .contact-item { padding: 1.5rem !important; }
-    .contact-item i { font-size: 2.5rem !important; }
-    .contact-item p { font-size: 1.1rem !important; }
+    .contact-item {
+        padding: 1.5rem !important;
+    }
+
+    .contact-item i {
+        font-size: 2.5rem !important;
+    }
+
+    .contact-item p {
+        font-size: 1.1rem !important;
+    }
 }
 
 @media (max-width: 480px) {
+
     .calendar-grid,
     .calendar-grid-bootstrap {
         gap: 2px !important;
