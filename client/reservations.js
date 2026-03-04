@@ -6,7 +6,7 @@
 
 import CONFIG from './config.js';
 import { db } from './firebase-config.js';
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ============================================
 // CONFIGURACIÓN DE VILLAS
@@ -117,6 +117,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Seleccionar villa inicial
     selectVilla('B-1');
+
+    // Mostrar botón "Mis Reservas" si hay reservas guardadas en localStorage
+    checkShowMyReservationsButton();
 });
 
 // ============================================
@@ -126,8 +129,10 @@ async function loadReservationsData() {
     try {
         const snapshot = await getDocs(collection(db, "reservations"));
         dbReservations = [];
-        snapshot.forEach(doc => {
-            dbReservations.push(doc.data());
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            data.firestoreId = docSnap.id;
+            dbReservations.push(data);
         });
         console.log("Reservas cargadas:", dbReservations.length);
     } catch (error) {
@@ -634,6 +639,9 @@ async function executePayment(method) {
 
         await saveReservationToStorage(reservationData);
 
+        // Guardar código en localStorage para "Mis Reservas"
+        saveMyReservationCode(confirmationCode, guestEmail);
+
         // Intentar enviar correo (no-blocking)
         fetch(`${CONFIG.API_URL}/api/send-email`, {
             method: 'POST',
@@ -756,3 +764,418 @@ window.navigateImage = navigateImage;
 window.selectVilla = selectVilla;
 window.updateVillaImage = updateVillaImage;
 window.changeGuests = changeGuests;
+window.openMyReservations = openMyReservations;
+window.closeMyReservations = closeMyReservations;
+window.lookupReservation = lookupReservation;
+window.showEditMyReservation = showEditMyReservation;
+window.saveEditMyReservation = saveEditMyReservation;
+window.cancelMyReservation = cancelMyReservation;
+
+// ============================================
+// MIS RESERVAS - LOCALSTORAGE TRACKING
+// ============================================
+const MY_RESERVATIONS_KEY = 'myVillasReservations';
+
+function getMyStoredReservations() {
+    try {
+        return JSON.parse(localStorage.getItem(MY_RESERVATIONS_KEY) || '[]');
+    } catch {
+        return [];
+    }
+}
+
+function saveMyReservationCode(code, email) {
+    const stored = getMyStoredReservations();
+    if (!stored.some(r => r.code === code)) {
+        stored.push({ code, email, savedAt: new Date().toISOString() });
+        localStorage.setItem(MY_RESERVATIONS_KEY, JSON.stringify(stored));
+    }
+    checkShowMyReservationsButton();
+}
+
+function checkShowMyReservationsButton() {
+    const btn = $('myReservationsBtn');
+    if (!btn) return;
+    const stored = getMyStoredReservations();
+    if (stored.length > 0) {
+        btn.classList.add('visible');
+    } else {
+        btn.classList.remove('visible');
+    }
+}
+
+// ============================================
+// MIS RESERVAS - PANEL OPEN/CLOSE
+// ============================================
+function openMyReservations() {
+    const overlay = $('myResOverlay');
+    const panel = $('myResPanel');
+    if (overlay) overlay.classList.add('active');
+    if (panel) panel.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    loadMyReservationsPanel();
+}
+
+function closeMyReservations() {
+    const overlay = $('myResOverlay');
+    const panel = $('myResPanel');
+    if (overlay) overlay.classList.remove('active');
+    if (panel) panel.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// ============================================
+// MIS RESERVAS - LOAD & DISPLAY
+// ============================================
+async function loadMyReservationsPanel() {
+    const container = $('myResPanelBody');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted small">Cargando reservas...</p>
+        </div>
+    `;
+
+    // Recargar datos desde Firebase
+    await loadReservationsData();
+
+    const stored = getMyStoredReservations();
+    const myReservations = [];
+
+    // Buscar las reservas almacenadas en Firebase
+    stored.forEach(s => {
+        const found = dbReservations.find(r => r.id === s.code);
+        if (found) myReservations.push(found);
+    });
+
+    let html = '';
+
+    // Formulario de búsqueda
+    html += `
+        <div class="my-res-lookup">
+            <h5><i class="bi bi-search me-1"></i> Buscar otra reserva</h5>
+            <div class="row g-2">
+                <div class="col-5">
+                    <input type="text" class="form-control" id="lookupCode" placeholder="VM-12345">
+                </div>
+                <div class="col-7">
+                    <input type="email" class="form-control" id="lookupEmail" placeholder="tu@email.com">
+                </div>
+                <div class="col-12">
+                    <button class="my-res-lookup-btn" onclick="lookupReservation()">
+                        <i class="bi bi-search me-1"></i> Buscar
+                    </button>
+                </div>
+            </div>
+            <div id="lookupError" class="my-res-validation-error mt-2"></div>
+        </div>
+    `;
+
+    if (myReservations.length === 0) {
+        html += `
+            <div class="my-res-empty">
+                <i class="bi bi-journal-x"></i>
+                <p>No tienes reservas guardadas</p>
+                <p class="small">Cuando hagas una reserva, aparecerá aquí automáticamente.<br>También puedes buscar una reserva existente usando tu código y email.</p>
+            </div>
+        `;
+    } else {
+        html += `<div class="my-res-separator">Tus reservas guardadas</div>`;
+        myReservations.forEach(res => {
+            html += renderMyReservationCard(res);
+        });
+    }
+
+    container.innerHTML = html;
+}
+
+function renderMyReservationCard(res) {
+    const checkIn = new Date(res.checkIn + 'T12:00:00');
+    const checkOut = new Date(res.checkOut + 'T12:00:00');
+    const nights = Math.ceil((checkOut - checkIn) / MS_PER_DAY);
+    const config = VILLA_CONFIG[res.villaNumber] || { price: 0, maxGuests: 2 };
+    const isPast = new Date(res.checkOut) < new Date();
+    const isCancelled = res.status === 'cancelled';
+    const canEdit = !isPast && !isCancelled;
+
+    const statusText = {
+        confirmed: 'Confirmada',
+        pending: 'Pendiente',
+        cancelled: 'Cancelada',
+        completed: 'Completada'
+    };
+
+    return `
+        <div class="my-res-card" id="myResCard-${res.id}">
+            <div class="my-res-card-header">
+                <span class="my-res-card-villa">Villa ${res.villaNumber}</span>
+                <span class="my-res-card-code">${res.id}</span>
+            </div>
+            <div class="my-res-card-details">
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Check-in</span>
+                    <span class="my-res-detail-value">${checkIn.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                </div>
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Check-out</span>
+                    <span class="my-res-detail-value">${checkOut.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                </div>
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Noches</span>
+                    <span class="my-res-detail-value">${nights}</span>
+                </div>
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Total</span>
+                    <span class="my-res-detail-value">$${(res.total || 0).toFixed(2)}</span>
+                </div>
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Huéspedes</span>
+                    <span class="my-res-detail-value">${res.numGuests || 1}</span>
+                </div>
+                <div class="my-res-detail-item">
+                    <span class="my-res-detail-label">Estado</span>
+                    <span class="my-res-status ${res.status || 'pending'}">${statusText[res.status] || 'Pendiente'}</span>
+                </div>
+            </div>
+            ${canEdit ? `
+            <div class="my-res-card-actions">
+                <button class="my-res-edit-btn" onclick="showEditMyReservation('${res.id}')">
+                    <i class="bi bi-pencil-square"></i> Editar Fechas
+                </button>
+                <button class="my-res-cancel-btn" onclick="cancelMyReservation('${res.id}', '${res.firestoreId || ''}')">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+            </div>
+            ` : `
+            <div class="text-center small text-muted pt-2 border-top">
+                ${isPast ? '📋 Reserva finalizada' : '❌ Reserva cancelada'}
+            </div>
+            `}
+        </div>
+    `;
+}
+
+// ============================================
+// MIS RESERVAS - EDICIÓN
+// ============================================
+function showEditMyReservation(reservationId) {
+    const res = dbReservations.find(r => r.id === reservationId);
+    if (!res) return;
+
+    const config = VILLA_CONFIG[res.villaNumber] || { price: 55, maxGuests: 2 };
+    const card = document.getElementById(`myResCard-${reservationId}`);
+    if (!card) return;
+
+    // Fecha mínima: mañana
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = formatDate(tomorrow);
+
+    card.outerHTML = `
+        <div class="my-res-edit-form" id="myResEdit-${reservationId}">
+            <h5><i class="bi bi-pencil-square me-2"></i>Editar Reserva ${reservationId}</h5>
+            <p class="small text-muted mb-3">Villa ${res.villaNumber} • Máx. ${config.maxGuests} huéspedes • $${config.price}/noche</p>
+            <div class="row g-2 mb-2">
+                <div class="col-6">
+                    <label class="form-label">Check-in</label>
+                    <input type="date" class="form-control" id="editMyCheckIn-${reservationId}"
+                           value="${res.checkIn}" min="${minDate}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Check-out</label>
+                    <input type="date" class="form-control" id="editMyCheckOut-${reservationId}"
+                           value="${res.checkOut}" min="${minDate}">
+                </div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">Huéspedes</label>
+                <select class="form-control" id="editMyGuests-${reservationId}">
+                    ${Array.from({ length: config.maxGuests }, (_, i) =>
+        `<option value="${i + 1}" ${(res.numGuests || 1) === i + 1 ? 'selected' : ''}>${i + 1}</option>`
+    ).join('')}
+                </select>
+            </div>
+            <div id="editMyError-${reservationId}" class="my-res-validation-error"></div>
+            <div class="my-res-edit-actions">
+                <button class="my-res-save-btn" onclick="saveEditMyReservation('${reservationId}', '${res.firestoreId || ''}', '${res.villaNumber}', ${config.price})">
+                    <i class="bi bi-check2 me-1"></i> Guardar
+                </button>
+                <button class="my-res-discard-btn" onclick="loadMyReservationsPanel()">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+async function saveEditMyReservation(reservationId, firestoreId, villaId, pricePerNight) {
+    const checkInInput = document.getElementById(`editMyCheckIn-${reservationId}`);
+    const checkOutInput = document.getElementById(`editMyCheckOut-${reservationId}`);
+    const guestsInput = document.getElementById(`editMyGuests-${reservationId}`);
+    const errorDiv = document.getElementById(`editMyError-${reservationId}`);
+
+    if (!checkInInput || !checkOutInput || !guestsInput) return;
+
+    const newCheckIn = checkInInput.value;
+    const newCheckOut = checkOutInput.value;
+    const newGuests = parseInt(guestsInput.value);
+
+    // Validaciones básicas
+    if (!newCheckIn || !newCheckOut) {
+        showEditError(errorDiv, 'Por favor selecciona ambas fechas.');
+        return;
+    }
+
+    if (newCheckIn >= newCheckOut) {
+        showEditError(errorDiv, 'La fecha de check-out debe ser posterior al check-in.');
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (new Date(newCheckIn) < today) {
+        showEditError(errorDiv, 'La fecha de check-in no puede ser en el pasado.');
+        return;
+    }
+
+    // Verificar disponibilidad (excluyendo esta reserva)
+    const isAvailable = isEditRangeAvailable(newCheckIn, newCheckOut, villaId, reservationId);
+    if (!isAvailable) {
+        showEditError(errorDiv, '⚠️ Las fechas seleccionadas tienen conflicto con otra reserva o fechas bloqueadas. Elige otras fechas.');
+        return;
+    }
+
+    // Calcular nuevo total
+    const nights = Math.ceil((new Date(newCheckOut) - new Date(newCheckIn)) / MS_PER_DAY);
+    const newTotal = nights * pricePerNight;
+
+    if (!firestoreId) {
+        showEditError(errorDiv, 'Error interno: No se encontró el ID de la reserva.');
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "reservations", firestoreId), {
+            checkIn: newCheckIn,
+            checkOut: newCheckOut,
+            numGuests: newGuests,
+            total: newTotal,
+            lastModified: new Date().toISOString()
+        });
+
+        // Recargar datos
+        await loadReservationsData();
+
+        // Mostrar éxito
+        const panelBody = $('myResPanelBody');
+        if (panelBody) {
+            panelBody.innerHTML = `
+                <div class="text-center py-5">
+                    <div style="font-size: 3.5rem; margin-bottom: 1rem;">✅</div>
+                    <h4 class="fw-bold" style="color: #0077B6;">¡Reserva Actualizada!</h4>
+                    <p class="text-muted">Tus nuevas fechas han sido guardadas correctamente.</p>
+                    <p class="small fw-bold">Nuevo total: $${newTotal.toFixed(2)} (${nights} noches)</p>
+                </div>
+            `;
+            setTimeout(loadMyReservationsPanel, 2500);
+        }
+
+        // Actualizar calendario principal
+        renderCalendar();
+        updatePrice();
+    } catch (error) {
+        console.error("Error actualizando reserva:", error);
+        showEditError(errorDiv, 'Error al guardar los cambios. Por favor intenta de nuevo.');
+    }
+}
+
+// Verificar disponibilidad para edición (excluye la reserva actual)
+function isEditRangeAvailable(newCheckIn, newCheckOut, villaId, excludeReservationId) {
+    // Verificar conflictos con otras reservas de la misma villa
+    const hasConflict = dbReservations.some(reservation => {
+        if (reservation.id === excludeReservationId) return false;
+        if (reservation.villaNumber !== villaId) return false;
+        if (reservation.status === 'cancelled') return false;
+
+        // Overlap: start < existingEnd AND end > existingStart
+        return newCheckIn < reservation.checkOut && newCheckOut > reservation.checkIn;
+    });
+
+    if (hasConflict) return false;
+
+    // Verificar contra fechas bloqueadas
+    const blockedDates = getBlockedDatesFromStorage();
+    const hasBlockConflict = blockedDates.some(block => {
+        const matchesVilla = !block.villaNumber || block.villaNumber === villaId;
+        if (!matchesVilla) return false;
+        return newCheckIn <= block.endDate && newCheckOut > block.startDate;
+    });
+
+    return !hasBlockConflict;
+}
+
+// ============================================
+// MIS RESERVAS - CANCELACIÓN
+// ============================================
+async function cancelMyReservation(reservationId, firestoreId) {
+    if (!confirm('¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.')) return;
+
+    if (!firestoreId) {
+        alert('Error: No se pudo identificar la reserva.');
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "reservations", firestoreId), {
+            status: 'cancelled',
+            cancelledAt: new Date().toISOString()
+        });
+
+        await loadReservationsData();
+        loadMyReservationsPanel();
+        renderCalendar();
+        updatePrice();
+    } catch (error) {
+        console.error("Error cancelando reserva:", error);
+        alert('Error al cancelar la reserva. Intenta de nuevo.');
+    }
+}
+
+// ============================================
+// MIS RESERVAS - BÚSQUEDA (LOOKUP)
+// ============================================
+async function lookupReservation() {
+    const code = document.getElementById('lookupCode')?.value?.trim();
+    const email = document.getElementById('lookupEmail')?.value?.trim();
+    const errorDiv = document.getElementById('lookupError');
+
+    if (!code || !email) {
+        showEditError(errorDiv, 'Ingresa tu código de reserva y email.');
+        return;
+    }
+
+    // Recargar datos de Firebase
+    await loadReservationsData();
+
+    const found = dbReservations.find(r =>
+        r.id && r.id.toUpperCase() === code.toUpperCase() &&
+        r.guestEmail && r.guestEmail.toLowerCase() === email.toLowerCase()
+    );
+
+    if (found) {
+        saveMyReservationCode(found.id, found.guestEmail);
+        loadMyReservationsPanel();
+    } else {
+        showEditError(errorDiv, 'No se encontró ninguna reserva con ese código y email.');
+    }
+}
+
+// Mostrar errores de validación
+function showEditError(errorDiv, message) {
+    if (!errorDiv) return;
+    errorDiv.textContent = message;
+    errorDiv.classList.add('show');
+    setTimeout(() => errorDiv.classList.remove('show'), 5000);
+}
