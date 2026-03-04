@@ -120,6 +120,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Mostrar botón "Mis Reservas" si hay reservas guardadas en localStorage
     checkShowMyReservationsButton();
+
+    // Recargar datos cuando el usuario vuelve a la pestaña (evita datos desactualizados)
+    document.addEventListener('visibilitychange', async () => {
+        if (document.visibilityState === 'visible') {
+            console.log('Recargando datos de reservas (pestaña activa)...');
+            await loadReservationsData();
+            renderCalendar();
+        }
+    });
 });
 
 // ============================================
@@ -461,7 +470,7 @@ function updateImageIndicator() {
 // ============================================
 // FORMULARIO DE RESERVA
 // ============================================
-function handleReservation(e) {
+async function handleReservation(e) {
     e.preventDefault();
 
     if (!selectedCheckIn || !selectedCheckOut) {
@@ -475,10 +484,14 @@ function handleReservation(e) {
         return;
     }
 
-    // Doble verificación de disponibilidad
+    // Recargar datos frescos de Firebase antes de validar
+    await loadReservationsData();
+
+    // Doble verificación de disponibilidad con datos actualizados
     if (!isRangeAvailable(selectedCheckIn, selectedCheckOut, selectedVilla)) {
         showNotification('No Disponible', 'Lo sentimos, algunas fechas ya no están disponibles. Selecciona un nuevo período.', true);
         resetForm();
+        renderCalendar();
         return;
     }
 
@@ -1040,7 +1053,10 @@ async function saveEditMyReservation(reservationId, firestoreId, villaId, priceP
         return;
     }
 
-    // Verificar disponibilidad (excluyendo esta reserva)
+    // Recargar datos frescos de Firebase antes de validar
+    await loadReservationsData();
+
+    // Verificar disponibilidad (excluyendo esta reserva) con datos actualizados
     const isAvailable = isEditRangeAvailable(newCheckIn, newCheckOut, villaId, reservationId);
     if (!isAvailable) {
         showEditError(errorDiv, '⚠️ Las fechas seleccionadas tienen conflicto con otra reserva o fechas bloqueadas. Elige otras fechas.');
