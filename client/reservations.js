@@ -801,6 +801,7 @@ window.openMyReservations = openMyReservations;
 window.closeMyReservations = closeMyReservations;
 window.lookupReservation = lookupReservation;
 window.showEditMyReservation = showEditMyReservation;
+window.discardEditMyReservation = discardEditMyReservation;
 window.saveEditMyReservation = saveEditMyReservation;
 window.cancelMyReservation = cancelMyReservation;
 window.confirmCancelMyReservation = confirmCancelMyReservation;
@@ -1036,12 +1037,24 @@ function showEditMyReservation(reservationId) {
                 <button class="my-res-save-btn" onclick="saveEditMyReservation('${reservationId}', '${res.firestoreId || ''}', '${res.villaNumber}', ${config.price})">
                     <i class="bi bi-check2 me-1"></i> Guardar
                 </button>
-                <button class="my-res-discard-btn" onclick="loadMyReservationsPanel()">
+                <button class="my-res-discard-btn" onclick="discardEditMyReservation('${reservationId}')">
                     Cancelar
                 </button>
             </div>
         </div>
     `;
+}
+
+// Volver a mostrar la tarjeta original sin recargar todo el panel
+function discardEditMyReservation(reservationId) {
+    const editForm = document.getElementById(`myResEdit-${reservationId}`);
+    if (!editForm) return;
+    const res = dbReservations.find(r => r.id === reservationId);
+    if (!res) {
+        loadMyReservationsPanel();
+        return;
+    }
+    editForm.outerHTML = renderMyReservationCard(res);
 }
 
 async function saveEditMyReservation(reservationId, firestoreId, villaId, pricePerNight) {
@@ -1157,22 +1170,30 @@ function isEditRangeAvailable(newCheckIn, newCheckOut, villaId, excludeReservati
 // MIS RESERVAS - CANCELACIÓN
 // ============================================
 function confirmCancelMyReservation(reservationId, firestoreId) {
-    const actionsDiv = document.getElementById(`actions-${reservationId}`);
-    if (!actionsDiv) return;
+    const modal = $('paymentModal');
+    const modalContent = $('modalContent');
+    if (!modal || !modalContent) return;
 
-    actionsDiv.innerHTML = `
-        <div class="w-100 text-center p-2" style="background: #fff5f5; border-radius: 12px; border: 1px solid #feb2b2;">
-            <p class="small fw-bold text-danger mb-2">¿Seguro que quieres cancelar esta reserva?</p>
-            <div class="d-flex gap-2">
-                <button class="btn btn-danger btn-sm flex-grow-1 fw-bold" onclick="cancelMyReservation('${reservationId}', '${firestoreId}')">
-                    Sí, cancelar
-                </button>
-                <button class="btn btn-light btn-sm flex-grow-1 fw-bold" onclick="loadMyReservationsPanel()">
-                    No, mantener
-                </button>
-            </div>
+    modalContent.innerHTML = `
+        <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
+        <div class="p-4 text-center">
+            <i class="bi bi-exclamation-triangle-fill text-warning fs-1 mb-3 d-block"></i>
+            <h3 class="text-danger fw-bold mb-3">Cancelar Reserva</h3>
+            <p class="text-secondary mb-4">¿Estás seguro de que deseas cancelar la reserva <strong>${reservationId}</strong>? Las fechas quedarán libres para otros huéspedes.</p>
+            <button class="w-100 py-3 fw-bold rounded-4 shadow-sm text-uppercase mb-2" 
+                style="background: #dc3545; color: white; border: none; font-size: 1rem; cursor: pointer; transition: all 0.2s;"
+                onmouseover="this.style.background='#bb2d3b'" onmouseout="this.style.background='#dc3545'"
+                onclick="closePaymentModal(); cancelMyReservation('${reservationId}', '${firestoreId}')">
+                Sí, Cancelar Reserva
+            </button>
+            <button class="cancel-btn w-100" onclick="closePaymentModal()">
+                No, Mantener Reserva
+            </button>
         </div>
     `;
+
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
 }
 
 async function cancelMyReservation(reservationId, firestoreId) {
