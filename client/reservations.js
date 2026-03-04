@@ -636,6 +636,24 @@ async function executePayment(method) {
     try {
         const reservationStatus = method === 'transfer' ? 'pending' : 'confirmed';
 
+        // *** VERIFICACIÓN FINAL: Recargar datos y validar una última vez ***
+        await loadReservationsData();
+        if (!isRangeAvailable(selectedCheckIn, selectedCheckOut, selectedVilla)) {
+            modalContent.innerHTML = `
+                <button class="btn-close-modal" onclick="closePaymentModal()" aria-label="Cerrar">×</button>
+                <div class="p-4 text-center">
+                    <i class="bi bi-exclamation-triangle-fill text-warning fs-1 mb-3 d-block"></i>
+                    <h3 class="text-danger fw-bold mb-3">Fechas No Disponibles</h3>
+                    <p class="text-secondary mb-4">Lo sentimos, alguien acaba de reservar estas fechas. Por favor selecciona un nuevo período.</p>
+                    <button class="btn-confirm-modern w-100 py-3 fw-bold rounded-4 shadow-sm text-uppercase" onclick="closePaymentModal(); resetForm(); renderCalendar();">
+                        Seleccionar Nuevas Fechas
+                    </button>
+                </div>
+            `;
+            renderCalendar();
+            return;
+        }
+
         const reservationData = {
             id: confirmationCode,
             guestName,
@@ -777,6 +795,7 @@ window.navigateImage = navigateImage;
 window.selectVilla = selectVilla;
 window.updateVillaImage = updateVillaImage;
 window.changeGuests = changeGuests;
+window.renderCalendar = renderCalendar;
 window.openMyReservations = openMyReservations;
 window.closeMyReservations = closeMyReservations;
 window.lookupReservation = lookupReservation;
