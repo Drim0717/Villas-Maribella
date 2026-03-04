@@ -914,10 +914,20 @@ body.modal-open {
    FOOTER
    ============================================ */
 .footer {
-    background: var(--dark-text);
+    background: linear-gradient(180deg, rgba(0, 119, 182, 0.75) 0%, rgba(41, 127, 145, 0.6) 50%),
+        url('images/Principal/footer.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #0077B6;
     color: var(--white);
     text-align: center;
-    padding: 3rem 2rem;
+    padding: 4rem 2rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.footer p {
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
 }
 
 .social-links {
@@ -1069,6 +1079,12 @@ body.modal-open {
     .section-title {
         font-size: 2rem;
     }
+
+    .footer {
+        background-size: cover;
+        background-position: center;
+        padding: 3rem 1.5rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -1138,8 +1154,15 @@ body.modal-open {
 }
 
 @keyframes fabPulse {
-    0%, 100% { box-shadow: 0 8px 25px rgba(0, 119, 182, 0.4); }
-    50% { box-shadow: 0 8px 32px rgba(0, 119, 182, 0.65); }
+
+    0%,
+    100% {
+        box-shadow: 0 8px 25px rgba(0, 119, 182, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 8px 32px rgba(0, 119, 182, 0.65);
+    }
 }
 
 /* Panel Overlay */
@@ -1523,8 +1546,13 @@ body.modal-open {
     background: #dee2e6;
 }
 
-.my-res-separator::before { left: 5%; }
-.my-res-separator::after { right: 5%; }
+.my-res-separator::before {
+    left: 5%;
+}
+
+.my-res-separator::after {
+    right: 5%;
+}
 
 @media (max-width: 576px) {
     .my-reservations-fab {
