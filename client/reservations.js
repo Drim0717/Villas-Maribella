@@ -268,7 +268,8 @@ function isReserved(date, villaId) {
     const isSavedReserved = dbReservations.some(reservation => {
         const matchesVilla = reservation.villaNumber == checkVilla ||
             (reservation.villaNumber == parseInt(checkVilla) && checkVilla.length === 1);
-        return matchesVilla && dateStr >= reservation.checkIn && dateStr < reservation.checkOut;
+        const isCancelled = reservation.status === 'cancelled';
+        return matchesVilla && !isCancelled && dateStr >= reservation.checkIn && dateStr < reservation.checkOut;
     });
 
     // Verificar fechas bloqueadas
@@ -802,6 +803,7 @@ window.lookupReservation = lookupReservation;
 window.showEditMyReservation = showEditMyReservation;
 window.saveEditMyReservation = saveEditMyReservation;
 window.cancelMyReservation = cancelMyReservation;
+window.confirmCancelMyReservation = confirmCancelMyReservation;
 
 // ============================================
 // MIS RESERVAS - LOCALSTORAGE TRACKING
@@ -972,11 +974,11 @@ function renderMyReservationCard(res) {
                 </div>
             </div>
             ${canEdit ? `
-            <div class="my-res-card-actions">
+            <div class="my-res-card-actions" id="actions-${res.id}">
                 <button class="my-res-edit-btn" onclick="showEditMyReservation('${res.id}')">
                     <i class="bi bi-pencil-square"></i> Editar Fechas
                 </button>
-                <button class="my-res-cancel-btn" onclick="cancelMyReservation('${res.id}', '${res.firestoreId || ''}')">
+                <button class="my-res-cancel-btn" onclick="confirmCancelMyReservation('${res.id}', '${res.firestoreId || ''}')">
                     <i class="bi bi-x-circle"></i> Cancelar
                 </button>
             </div>
@@ -1154,27 +1156,66 @@ function isEditRangeAvailable(newCheckIn, newCheckOut, villaId, excludeReservati
 // ============================================
 // MIS RESERVAS - CANCELACIÓN
 // ============================================
-async function cancelMyReservation(reservationId, firestoreId) {
-    if (!confirm('¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.')) return;
+function confirmCancelMyReservation(reservationId, firestoreId) {
+    const actionsDiv = document.getElementById(`actions-${reservationId}`);
+    if (!actionsDiv) return;
 
+    actionsDiv.innerHTML = `
+        <div class="w-100 text-center p-2" style="background: #fff5f5; border-radius: 12px; border: 1px solid #feb2b2;">
+            <p class="small fw-bold text-danger mb-2">¿Seguro que quieres cancelar esta reserva?</p>
+            <div class="d-flex gap-2">
+                <button class="btn btn-danger btn-sm flex-grow-1 fw-bold" onclick="cancelMyReservation('${reservationId}', '${firestoreId}')">
+                    Sí, cancelar
+                </button>
+                <button class="btn btn-light btn-sm flex-grow-1 fw-bold" onclick="loadMyReservationsPanel()">
+                    No, mantener
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+async function cancelMyReservation(reservationId, firestoreId) {
     if (!firestoreId) {
         alert('Error: No se pudo identificar la reserva.');
         return;
     }
 
     try {
+        const panelBody = $('myResPanelBody');
+        if (panelBody) {
+            panelBody.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <p class="mt-3 fw-bold">Cancelando reserva...</p>
+                </div>
+            `;
+        }
+
         await updateDoc(doc(db, "reservations", firestoreId), {
             status: 'cancelled',
             cancelledAt: new Date().toISOString()
         });
 
         await loadReservationsData();
-        loadMyReservationsPanel();
+
+        if (panelBody) {
+            panelBody.innerHTML = `
+                <div class="text-center py-5">
+                    <div style="font-size: 3.5rem; margin-bottom: 1rem;">🗑️</div>
+                    <h4 class="fw-bold" style="color: #dc3545;">Reserva Cancelada</h4>
+                    <p class="text-muted">La reserva ${reservationId} ha sido eliminada y las fechas están libres.</p>
+                </div>
+            `;
+            setTimeout(loadMyReservationsPanel, 2500);
+        }
+
         renderCalendar();
         updatePrice();
     } catch (error) {
         console.error("Error cancelando reserva:", error);
         alert('Error al cancelar la reserva. Intenta de nuevo.');
+        loadMyReservationsPanel();
     }
 }
 
