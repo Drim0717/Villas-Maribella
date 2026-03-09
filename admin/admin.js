@@ -169,6 +169,11 @@ function loadDashboardData() {
     loadReservationsTable();
     loadBlockedDates();
     updateStatistics();
+
+    // Refresh calendar if element exists
+    if (document.getElementById('adminCalendar')) {
+        renderCalendar();
+    }
 }
 
 function populateMonthFilter() {
@@ -339,9 +344,13 @@ function updateStatistics() {
 // RESERVATION MANAGEMENT
 // ============================================
 function editReservation(id) {
-    const reservation = allReservations.find(r => r.id === id); // Find in global state
+    console.log("Iniciando editReservation para ID:", id);
+    const reservation = allReservations.find(r => String(r.id) === String(id));
 
-    if (!reservation) return;
+    if (!reservation) {
+        console.error("Reserva no encontrada");
+        return;
+    }
 
     currentEditReservationId = reservation.firestoreId;
 
@@ -358,28 +367,52 @@ function editReservation(id) {
     editVillaId = vNumber;
 
     // Configurar fechas para el calendario y inputs
-    editSelectedCheckIn = new Date(reservation.checkIn + 'T12:00:00');
-    editSelectedCheckOut = new Date(reservation.checkOut + 'T12:00:00');
+    const checkInVal = reservation.checkIn || formatDateISO(new Date());
+    const checkOutVal = reservation.checkOut || formatDateISO(new Date(Date.now() + 86400000));
+
+    editSelectedCheckIn = new Date(checkInVal + 'T12:00:00');
+    editSelectedCheckOut = new Date(checkOutVal + 'T12:00:00');
+
+    if (isNaN(editSelectedCheckIn.getTime())) editSelectedCheckIn = new Date();
+    if (isNaN(editSelectedCheckOut.getTime())) editSelectedCheckOut = new Date(Date.now() + 86400000);
+
     editCurrentMonth = new Date(editSelectedCheckIn.getFullYear(), editSelectedCheckIn.getMonth(), 1);
 
-    document.getElementById('editReservationId').value = reservation.firestoreId; // Use Firestore ID for updates
-    document.getElementById('editGuestName').value = reservation.guestName;
-    document.getElementById('editGuestEmail').value = reservation.guestEmail;
-    document.getElementById('editCheckIn').value = reservation.checkIn;
-    document.getElementById('editCheckOut').value = reservation.checkOut;
-    document.getElementById('editNumGuests').value = reservation.numGuests;
+    document.getElementById('editReservationId').value = reservation.firestoreId || '';
+    document.getElementById('editGuestName').value = reservation.guestName || '';
+    document.getElementById('editGuestEmail').value = reservation.guestEmail || '';
+    document.getElementById('editCheckIn').value = checkInVal;
+    document.getElementById('editCheckOut').value = checkOutVal;
+    document.getElementById('editNumGuests').value = reservation.numGuests || 1;
     document.getElementById('editStatus').value = reservation.status || 'confirmed';
 
     const editVillaLabel = document.getElementById('editVillaLabel');
     if (editVillaLabel) editVillaLabel.textContent = editVillaId;
 
+    // Mostrar modal con Bootstrap API o fallback manual
     const modalEl = document.getElementById('editModal');
     if (modalEl) {
-        let modal = bootstrap.Modal.getInstance(modalEl);
-        if (!modal) {
-            modal = new bootstrap.Modal(modalEl);
+        try {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modal = bootstrap.Modal.getInstance(modalEl);
+                if (!modal) modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                // Fallback si Bootstrap no cargó correctamente
+                modalEl.style.display = 'block';
+                modalEl.classList.add('show');
+                document.body.classList.add('modal-open');
+                if (!document.querySelector('.modal-backdrop')) {
+                    const b = document.createElement('div');
+                    b.className = 'modal-backdrop fade show';
+                    document.body.appendChild(b);
+                }
+            }
+        } catch (e) {
+            console.error("Error al abrir modal:", e);
+            modalEl.style.display = 'block';
+            modalEl.classList.add('show');
         }
-        modal.show();
     }
 
     renderEditCalendar();
@@ -614,6 +647,9 @@ function renderEditCalendar() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const checkInStrFixed = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : null;
+    const checkOutStrFixed = editSelectedCheckOut ? formatDateISO(editSelectedCheckOut) : null;
+
     for (let day = 1; day <= lastDay.getDate(); day++) {
         const dayDate = new Date(editCurrentMonth.getFullYear(), editCurrentMonth.getMonth(), day);
         const dayElement = document.createElement('div');
@@ -630,18 +666,14 @@ function renderEditCalendar() {
             dayElement.classList.add(status);
 
             const dateStr = formatDateISO(dayDate);
-            const inSelected = editSelectedCheckIn && dateStr === formatDateISO(editSelectedCheckIn);
-            const outSelected = editSelectedCheckOut && dateStr === formatDateISO(editSelectedCheckOut);
-
-            // For range comparison, compare the strings lexicographically (yyyy-mm-dd works perfectly)
-            const checkInStr = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : null;
-            const checkOutStr = editSelectedCheckOut ? formatDateISO(editSelectedCheckOut) : null;
-            const inRange = checkInStr && checkOutStr && dateStr > checkInStr && dateStr < checkOutStr;
+            const inSelected = checkInStrFixed && dateStr === checkInStrFixed;
+            const outSelected = checkOutStrFixed && dateStr === checkOutStrFixed;
+            const inRange = checkInStrFixed && checkOutStrFixed && dateStr > checkInStrFixed && dateStr < checkOutStrFixed;
 
             if (inSelected || outSelected) dayElement.classList.add('selected');
             if (inRange) dayElement.classList.add('in-range');
 
-            dayElement.addEventListener('click', () => selectEditDate(dayDate));
+            dayElement.onclick = () => selectEditDate(dayDate);
         }
 
         calendar.appendChild(dayElement);
@@ -807,7 +839,16 @@ function renderCalendar() {
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">🚫 Bloqueado</div>`;
         } else if (occupancyInfo && occupancyInfo.guests.length > 0) {
             dayCell.classList.add('occupied');
-            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name} (V${g.villa})${g.type}</div>`).join('');
+            const guestList = occupancyInfo.guests.map(g => {
+                let badgeClass = 'bg-secondary';
+                if (g.type.includes('Entrada')) badgeClass = 'bg-success';
+                else if (g.type.includes('Salida')) badgeClass = 'bg-danger';
+
+                return `<div class="guest-name" title="Villa #${g.villa}">
+                    <span class="badge ${badgeClass}" style="font-size: 0.6rem; padding: 2px 4px;">${g.type.replace(/[()]/g, '').trim()}</span>
+                    <strong>${g.name}</strong> <small>(V${g.villa})</small>
+                </div>`;
+            }).join('');
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">${guestList}</div>`;
         } else {
             dayCell.classList.add('available');
@@ -818,25 +859,35 @@ function renderCalendar() {
 }
 function getOccupiedDates() {
     const occupiedMap = {};
-    allReservations.forEach(reservation => {
-        const checkIn = new Date(reservation.checkIn);
-        const checkOut = new Date(reservation.checkOut);
+    const villaMapping = {
+        '1': 'B-1', '2': 'C-1', '3': 'D-1',
+        '4': 'AA-1', '5': 'AB-1', '6': 'AF-1',
+        '1A': 'B-1', '2B': 'C-1', '3C': 'D-1',
+        '4D': 'AA-1', '5E': 'AB-1', '6F': 'AF-1',
+        '6G': 'AF-1'
+    };
 
-        // Ensure accurate string matching without timezone offset issues
+    allReservations.forEach(reservation => {
         const checkInStr = reservation.checkIn;
         const checkOutStr = reservation.checkOut;
+        let vNum = String(reservation.villaNumber || 'N/A');
+        if (villaMapping[vNum]) vNum = villaMapping[vNum];
 
-        const villaNum = reservation.villaNumber || 'N/A';
-        for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
-            const dateStr = d.toISOString().split('T')[0];
+        let d = new Date(checkInStr + 'T12:00:00');
+        const end = new Date(checkOutStr + 'T12:00:00');
+
+        while (d <= end) {
+            const dateStr = formatDateISO(d);
             if (!occupiedMap[dateStr]) {
                 occupiedMap[dateStr] = { date: dateStr, guests: [] };
             }
+
             let type = '';
             if (dateStr === checkInStr) type = ' (Entrada)';
             else if (dateStr === checkOutStr) type = ' (Salida)';
 
-            occupiedMap[dateStr].guests.push({ name: reservation.guestName, villa: villaNum, type: type });
+            occupiedMap[dateStr].guests.push({ name: reservation.guestName, villa: vNum, type: type });
+            d.setDate(d.getDate() + 1);
         }
     });
     return Object.values(occupiedMap);
