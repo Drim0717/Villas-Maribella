@@ -674,8 +674,8 @@ section {
 }
 
 .calendar-day.selected {
-    background-color: var(--cyan-vibrant) !important;
-    color: white !important;
+    background: var(--cyan-vibrant) !important;
+    color: rgb(255, 255, 255) !important;
     border: none !important;
     box-shadow: 0 4px 10px rgba(0, 194, 255, 0.3);
     font-weight: 700;
