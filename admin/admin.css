@@ -6,8 +6,8 @@
     --deep-ocean: #0077B6;
     --dark-text: #2B2D42;
     --light-gray: #F8F9FA;
+    --cyan-vibrant: #00C2FF;
     --bs-primary: #00B4D8;
-    /* Override Bootstrap Primary */
 }
 
 /* ============================================
@@ -166,6 +166,28 @@ h6 {
     /* Wrap long names */
 }
 
+.day-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.guest-name {
+    font-size: 0.65rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+    padding: 1px 3px;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
 .calendar-day.blocked {
     background-color: #e2e3e5;
     color: #6c757d;
@@ -182,6 +204,84 @@ h6 {
     font-size: 0.75rem;
     color: var(--dark-text);
     padding-bottom: 0.25rem;
+}
+
+/* ============================================
+   EDIT CALENDAR STYLES (En Modal)
+   ============================================ */
+#editCalendar .calendar-day {
+    cursor: pointer;
+    background-color: white;
+    font-size: 0.85rem;
+    padding: 0;
+}
+
+#editCalendar .calendar-day:hover:not(.past):not(.reserved) {
+    background-color: #f1faff;
+    border-color: var(--cyan-vibrant);
+    color: var(--cyan-vibrant);
+}
+
+#editCalendar .calendar-day.past {
+    background-color: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+#editCalendar .calendar-day.reserved {
+    background-color: #fff3cd;
+    color: #856404;
+    text-decoration: line-through;
+    opacity: 0.6;
+    cursor: not-allowed;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+#editCalendar .calendar-day.reserved::after {
+    content: '✕';
+    position: absolute;
+    font-size: 0.7rem;
+}
+
+#editCalendar .calendar-day.checkin-reserved {
+    background: linear-gradient(135deg, white 50%, #fff3cd 50%);
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+#editCalendar .calendar-day.checkout-reserved {
+    background: linear-gradient(135deg, #fff3cd 50%, white 50%);
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+#editCalendar .calendar-day.checkin-reserved.selected {
+    background: linear-gradient(135deg, #00C2FF 50%, #fff3cd 50%) !important;
+    background: linear-gradient(135deg, var(--cyan-vibrant) 50%, #fff3cd 50%) !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#editCalendar .calendar-day.checkout-reserved.selected {
+    background: linear-gradient(135deg, #fff3cd 50%, #00C2FF 50%) !important;
+    background: linear-gradient(135deg, #fff3cd 50%, var(--cyan-vibrant) 50%) !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#editCalendar .calendar-day.selected {
+    background-color: #00C2FF !important;
+    background-color: var(--cyan-vibrant) !important;
+    color: #ffffff !important;
+    border: 2px solid #0077B6 !important;
+    font-weight: 800 !important;
+    z-index: 10 !important;
+}
+
+#editCalendar .calendar-day.in-range {
+    background-color: rgba(0, 180, 216, 0.3);
+    font-weight: 600;
 }
 
 /* ============================================
