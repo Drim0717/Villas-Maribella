@@ -670,7 +670,11 @@ function renderEditCalendar() {
             const outSelected = checkOutStrFixed && dateStr === checkOutStrFixed;
             const inRange = checkInStrFixed && checkOutStrFixed && dateStr > checkInStrFixed && dateStr < checkOutStrFixed;
 
-            if (inSelected || outSelected) dayElement.classList.add('selected');
+            if (inSelected || outSelected) {
+                dayElement.classList.add('selected');
+                dayElement.style.backgroundColor = '#00C2FF';
+                dayElement.style.color = '#ffffff';
+            }
             if (inRange) dayElement.classList.add('in-range');
 
             dayElement.onclick = () => selectEditDate(dayDate);

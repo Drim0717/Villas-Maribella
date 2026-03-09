@@ -8,7 +8,6 @@
     --light-gray: #F8F9FA;
     --cyan-vibrant: #00C2FF;
     --bs-primary: #00B4D8;
-    /* Override Bootstrap Primary */
 }
 
 /* ============================================
@@ -257,23 +256,27 @@ h6 {
     border: 1px solid #eee;
 }
 
-#editCalendar .calendar-day.selected {
-    background: var(--cyan-vibrant) !important;
-    color: white !important;
-    border: none !important;
-    font-weight: 700;
-}
-
 #editCalendar .calendar-day.checkin-reserved.selected {
+    background: linear-gradient(135deg, #00C2FF 50%, #fff3cd 50%) !important;
     background: linear-gradient(135deg, var(--cyan-vibrant) 50%, #fff3cd 50%) !important;
     color: white !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 #editCalendar .calendar-day.checkout-reserved.selected {
+    background: linear-gradient(135deg, #fff3cd 50%, #00C2FF 50%) !important;
     background: linear-gradient(135deg, #fff3cd 50%, var(--cyan-vibrant) 50%) !important;
     color: white !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#editCalendar .calendar-day.selected {
+    background-color: #00C2FF !important;
+    background-color: var(--cyan-vibrant) !important;
+    color: #ffffff !important;
+    border: 2px solid #0077B6 !important;
+    font-weight: 800 !important;
+    z-index: 10 !important;
 }
 
 #editCalendar .calendar-day.in-range {
