@@ -344,7 +344,18 @@ function editReservation(id) {
     if (!reservation) return;
 
     currentEditReservationId = reservation.firestoreId;
-    editVillaId = reservation.villaNumber || 'B-1';
+
+    const villaMapping = {
+        '1': 'B-1', '2': 'C-1', '3': 'D-1',
+        '4': 'AA-1', '5': 'AB-1', '6': 'AF-1',
+        '1A': 'B-1', '2B': 'C-1', '3C': 'D-1',
+        '4D': 'AA-1', '5E': 'AB-1', '6F': 'AF-1',
+        '6G': 'AF-1'
+    };
+    let vNumber = String(reservation.villaNumber || 'B-1');
+    if (villaMapping[vNumber]) vNumber = villaMapping[vNumber];
+
+    editVillaId = vNumber;
 
     // Configurar fechas para el calendario y inputs
     editSelectedCheckIn = new Date(reservation.checkIn + 'T12:00:00');
@@ -440,10 +451,10 @@ function changeEditMonth(delta) {
 }
 
 function formatDateISO(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    if (!date) return '';
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
 }
 
 function getEditDayStatus(date) {
@@ -453,16 +464,27 @@ function getEditDayStatus(date) {
     let hasCheckOut = false;
     let isMiddleDay = false;
 
+    const villaMapping = {
+        '1': 'B-1', '2': 'C-1', '3': 'D-1',
+        '4': 'AA-1', '5': 'AB-1', '6': 'AF-1',
+        '1A': 'B-1', '2B': 'C-1', '3C': 'D-1',
+        '4D': 'AA-1', '5E': 'AB-1', '6F': 'AF-1',
+        '6G': 'AF-1'
+    };
+
     // Verificar reservas de Firestore
     allReservations.forEach(reservation => {
         if (reservation.firestoreId === currentEditReservationId) return;
 
+        let resVilla = String(reservation.villaNumber);
+        if (villaMapping[resVilla]) resVilla = villaMapping[resVilla];
+
         const checkVilla = editVillaId;
-        const matchesVilla = reservation.villaNumber == checkVilla ||
-            (reservation.villaNumber == parseInt(checkVilla) && checkVilla.length === 1);
+        const matchesVilla = resVilla === checkVilla;
         const isCancelled = reservation.status === 'cancelled';
 
         if (matchesVilla && !isCancelled) {
+            // Compare actual strings for precise matching
             if (dateStr === reservation.checkIn) hasCheckIn = true;
             if (dateStr === reservation.checkOut) hasCheckOut = true;
             if (dateStr > reservation.checkIn && dateStr < reservation.checkOut) isMiddleDay = true;
@@ -487,40 +509,45 @@ function getEditDayStatus(date) {
 }
 
 function selectEditDate(date) {
-    const dateStr = date.toDateString();
     const status = getEditDayStatus(date);
+    const dateStr = formatDateISO(date);
 
     const checkInEl = document.getElementById('editCheckIn');
     const checkOutEl = document.getElementById('editCheckOut');
 
-    if (editSelectedCheckIn && dateStr === editSelectedCheckIn.toDateString()) {
+    const editCheckInStr = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : null;
+    const editCheckOutStr = editSelectedCheckOut ? formatDateISO(editSelectedCheckOut) : null;
+
+    if (editCheckInStr && dateStr === editCheckInStr) {
         editSelectedCheckIn = editSelectedCheckOut;
         editSelectedCheckOut = null;
         checkInEl.value = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : '';
         checkOutEl.value = '';
-    } else if (editSelectedCheckOut && dateStr === editSelectedCheckOut.toDateString()) {
+    } else if (editCheckOutStr && dateStr === editCheckOutStr) {
         editSelectedCheckOut = null;
         checkOutEl.value = '';
-    } else if (!editSelectedCheckIn || (editSelectedCheckIn && editSelectedCheckOut) || (date < editSelectedCheckIn)) {
+    } else if (!editCheckInStr || (editCheckInStr && editCheckOutStr) || (dateStr < editCheckInStr)) {
         if (status === 'checkin-reserved') {
             alert('El check-in no está disponible para este día.');
             return;
         }
-        editSelectedCheckIn = date;
+        editSelectedCheckIn = new Date(dateStr + 'T12:00:00');
         editSelectedCheckOut = null;
-        checkInEl.value = formatDateISO(date);
+        checkInEl.value = formatDateISO(editSelectedCheckIn);
         checkOutEl.value = '';
-    } else if (date > editSelectedCheckIn) {
+    } else if (dateStr > editCheckInStr) {
         if (status === 'checkout-reserved') {
             alert('El check-out no está disponible para este día.');
             return;
         }
-        if (!isEditRangeAvailable(editSelectedCheckIn, date)) {
+
+        let targetCheckOut = new Date(dateStr + 'T12:00:00');
+        if (!isEditRangeAvailable(editSelectedCheckIn, targetCheckOut)) {
             alert('No se puede seleccionar este rango porque contiene fechas bloqueadas u ocupadas.');
             return;
         }
-        editSelectedCheckOut = date;
-        checkOutEl.value = formatDateISO(date);
+        editSelectedCheckOut = targetCheckOut;
+        checkOutEl.value = formatDateISO(targetCheckOut);
     }
     renderEditCalendar();
 }
@@ -543,7 +570,10 @@ function isEditRangeAvailable(start, end) {
         } else {
             if (status !== 'available') return false;
         }
-        tempDate.setDate(tempDate.getDate() + 1);
+
+        let newDate = new Date(tempDate);
+        newDate.setDate(tempDate.getDate() + 1);
+        tempDate = newDate;
     }
     return true;
 }
@@ -592,10 +622,14 @@ function renderEditCalendar() {
         } else {
             dayElement.classList.add(status);
 
-            const dateStr = dayDate.toDateString();
-            const inSelected = editSelectedCheckIn && dateStr === editSelectedCheckIn.toDateString();
-            const outSelected = editSelectedCheckOut && dateStr === editSelectedCheckOut.toDateString();
-            const inRange = editSelectedCheckIn && editSelectedCheckOut && dayDate > editSelectedCheckIn && dayDate < editSelectedCheckOut;
+            const dateStr = formatDateISO(dayDate);
+            const inSelected = editSelectedCheckIn && dateStr === formatDateISO(editSelectedCheckIn);
+            const outSelected = editSelectedCheckOut && dateStr === formatDateISO(editSelectedCheckOut);
+
+            // For range comparison, compare the strings lexicographically (yyyy-mm-dd works perfectly)
+            const checkInStr = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : null;
+            const checkOutStr = editSelectedCheckOut ? formatDateISO(editSelectedCheckOut) : null;
+            const inRange = checkInStr && checkOutStr && dateStr > checkInStr && dateStr < checkOutStr;
 
             if (inSelected || outSelected) dayElement.classList.add('selected');
             if (inRange) dayElement.classList.add('in-range');
