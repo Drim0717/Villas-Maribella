@@ -373,7 +373,14 @@ function editReservation(id) {
     const editVillaLabel = document.getElementById('editVillaLabel');
     if (editVillaLabel) editVillaLabel.textContent = editVillaId;
 
-    document.getElementById('editModal').style.display = 'flex';
+    const modalEl = document.getElementById('editModal');
+    if (modalEl) {
+        let modal = bootstrap.Modal.getInstance(modalEl);
+        if (!modal) {
+            modal = new bootstrap.Modal(modalEl);
+        }
+        modal.show();
+    }
 
     renderEditCalendar();
 }
@@ -432,13 +439,14 @@ async function deleteReservation(firestoreId) {
 }
 
 function closeEditModal() {
-    const modal = document.getElementById('editModal');
-    if (modal) {
-        modal.style.display = 'none';
-        // Limpiar el backdrop si Bootstrap lo creó
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) backdrop.remove();
-        document.body.classList.remove('modal-open');
+    const modalEl = document.getElementById('editModal');
+    if (modalEl) {
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) {
+            modal.hide();
+        } else {
+            modalEl.style.display = 'none';
+        }
     }
 }
 
@@ -451,7 +459,7 @@ function changeEditMonth(delta) {
 }
 
 function formatDateISO(date) {
-    if (!date) return '';
+    if (!date || isNaN(new Date(date).getTime())) return '';
     const d = new Date(date);
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().split('T')[0];
@@ -556,8 +564,9 @@ function isEditRangeAvailable(start, end) {
     if (!start || !end) return true;
     let tempDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-
-    while (tempDate <= endDate) {
+    let safetyCounter = 0; // limit 300 days to prevent infinite loop
+    while (tempDate <= endDate && safetyCounter < 300) {
+        safetyCounter++;
         const status = getEditDayStatus(tempDate);
         const dateStr = formatDateISO(tempDate);
         const startStr = formatDateISO(start);
@@ -571,9 +580,7 @@ function isEditRangeAvailable(start, end) {
             if (status !== 'available') return false;
         }
 
-        let newDate = new Date(tempDate);
-        newDate.setDate(tempDate.getDate() + 1);
-        tempDate = newDate;
+        tempDate.setDate(tempDate.getDate() + 1);
     }
     return true;
 }
