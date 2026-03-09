@@ -649,6 +649,30 @@ section {
     font-size: 0.7rem;
 }
 
+.calendar-day.checkin-reserved {
+    background: linear-gradient(135deg, white 50%, #fff3cd 50%);
+    color: var(--dark-text);
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.calendar-day.checkin-reserved:hover {
+    background: linear-gradient(135deg, #f1faff 50%, #ffe8a1 50%);
+    border-color: var(--cyan-vibrant);
+}
+
+.calendar-day.checkout-reserved {
+    background: linear-gradient(135deg, #fff3cd 50%, white 50%);
+    color: var(--dark-text);
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.calendar-day.checkout-reserved:hover {
+    background: linear-gradient(135deg, #ffe8a1 50%, #f1faff 50%);
+    border-color: var(--cyan-vibrant);
+}
+
 .calendar-day.selected {
     background-color: var(--cyan-vibrant) !important;
     color: white !important;

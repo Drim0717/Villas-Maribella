@@ -223,12 +223,14 @@ function renderCalendar() {
         dayElement.className = 'calendar-day';
         dayElement.textContent = day;
 
+        const status = getDayStatus(dayDate);
+
         if (dayDate < today) {
             dayElement.classList.add('past');
-        } else if (isReserved(dayDate)) {
+        } else if (status === 'fully-reserved') {
             dayElement.classList.add('reserved');
         } else {
-            dayElement.classList.add('available');
+            dayElement.classList.add(status); // class will be 'available', 'checkin-reserved', or 'checkout-reserved'
 
             if (isSelected(dayDate)) dayElement.classList.add('selected');
             if (isInRange(dayDate)) dayElement.classList.add('in-range');
@@ -249,37 +251,71 @@ function isRangeAvailable(start, end, villaId) {
     let tempDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
-    while (tempDate < endDate) {
-        if (isReserved(new Date(tempDate), villaId)) {
-            console.warn("Rango inválido: Fecha bloqueada en", formatDate(tempDate));
-            return false;
+    while (tempDate <= endDate) {
+        const status = getDayStatus(tempDate, villaId);
+        const dateStr = formatDate(tempDate);
+        const startStr = formatDate(start);
+        const endStr = formatDate(endDate);
+
+        if (dateStr === startStr) {
+            if (status === 'fully-reserved' || status === 'checkin-reserved') {
+                console.warn("Rango inválido: Check-in bloqueado en", dateStr);
+                return false;
+            }
+        } else if (dateStr === endStr) {
+            if (status === 'fully-reserved' || status === 'checkout-reserved') {
+                console.warn("Rango inválido: Check-out bloqueado en", dateStr);
+                return false;
+            }
+        } else {
+            if (status !== 'available') {
+                console.warn("Rango inválido: Fecha bloqueada en", dateStr);
+                return false;
+            }
         }
+
         tempDate.setDate(tempDate.getDate() + 1);
     }
     return true;
 }
 
-function isReserved(date, villaId) {
+function getDayStatus(date, villaId) {
     if (!(date instanceof Date)) date = new Date(date);
     const checkVilla = villaId || currentVillaId;
     const dateStr = formatDate(date);
 
+    let hasCheckIn = false;
+    let hasCheckOut = false;
+    let isMiddleDay = false;
+
     // Verificar reservas de Firestore
-    const isSavedReserved = dbReservations.some(reservation => {
+    dbReservations.forEach(reservation => {
         const matchesVilla = reservation.villaNumber == checkVilla ||
             (reservation.villaNumber == parseInt(checkVilla) && checkVilla.length === 1);
         const isCancelled = reservation.status === 'cancelled';
-        return matchesVilla && !isCancelled && dateStr >= reservation.checkIn && dateStr < reservation.checkOut;
+
+        if (matchesVilla && !isCancelled) {
+            if (dateStr === reservation.checkIn) hasCheckIn = true;
+            if (dateStr === reservation.checkOut) hasCheckOut = true;
+            if (dateStr > reservation.checkIn && dateStr < reservation.checkOut) isMiddleDay = true;
+        }
     });
 
     // Verificar fechas bloqueadas
     const blockedDates = getBlockedDatesFromStorage();
-    const isBlocked = blockedDates.some(block => {
+    blockedDates.forEach(block => {
         const matchesVilla = !block.villaNumber || block.villaNumber == checkVilla;
-        return matchesVilla && dateStr >= block.startDate && dateStr <= block.endDate;
+        if (matchesVilla && dateStr >= block.startDate && dateStr <= block.endDate) {
+            isMiddleDay = true;
+        }
     });
 
-    return isSavedReserved || isBlocked;
+    if (isMiddleDay) return 'fully-reserved';
+    if (hasCheckIn && hasCheckOut) return 'fully-reserved';
+    if (hasCheckIn) return 'checkin-reserved';
+    if (hasCheckOut) return 'checkout-reserved';
+
+    return 'available';
 }
 
 function isSelected(date) {
@@ -299,6 +335,7 @@ function isInRange(date) {
 // ============================================
 function selectDate(date) {
     const dateStr = date.toDateString();
+    const status = getDayStatus(date);
 
     if (selectedCheckIn && dateStr === selectedCheckIn.toDateString()) {
         // Deseleccionar check-in
@@ -310,14 +347,22 @@ function selectDate(date) {
         // Deseleccionar check-out
         selectedCheckOut = null;
         $('checkOut').value = '';
-    } else if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
-        // Primera selección o reinicio
+    } else if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut) || (date < selectedCheckIn)) {
+        // Primera selección o reinicio o nueva fecha anterior a check-in
+        if (status === 'checkin-reserved') {
+            showNotification('Día No Disponible', 'El check-in no está disponible para este día (ya hay una llegada programada).', true);
+            return;
+        }
         selectedCheckIn = date;
         selectedCheckOut = null;
         $('checkIn').value = formatDate(date);
         $('checkOut').value = '';
     } else if (date > selectedCheckIn) {
         // Segunda selección (check-out) - validar rango
+        if (status === 'checkout-reserved') {
+            showNotification('Día No Disponible', 'El check-out no está disponible para este día (ya hay una salida programada).', true);
+            return;
+        }
         if (!isRangeAvailable(selectedCheckIn, date)) {
             resetForm();
             showNotification('Rango No Disponible', 'No se puede seleccionar este rango porque contiene fechas ya reservadas o bloqueadas.', true);
@@ -325,12 +370,6 @@ function selectDate(date) {
         }
         selectedCheckOut = date;
         $('checkOut').value = formatDate(date);
-    } else {
-        // Fecha anterior al check-in actual → nuevo check-in
-        selectedCheckIn = date;
-        selectedCheckOut = null;
-        $('checkIn').value = formatDate(date);
-        $('checkOut').value = '';
     }
 
     renderCalendar();
