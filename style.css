@@ -673,6 +673,18 @@ section {
     border-color: var(--cyan-vibrant);
 }
 
+.calendar-day.checkin-reserved.selected {
+    background: linear-gradient(135deg, var(--cyan-vibrant) 50%, #fff3cd 50%) !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.calendar-day.checkout-reserved.selected {
+    background: linear-gradient(135deg, #fff3cd 50%, var(--cyan-vibrant) 50%) !important;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
 .calendar-day.selected {
     background: var(--cyan-vibrant) !important;
     color: rgb(255, 255, 255) !important;

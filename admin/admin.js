@@ -13,6 +13,13 @@ let allBlockedDates = [];
 let currentCalendarMonth = new Date().getMonth();
 let currentCalendarYear = new Date().getFullYear();
 
+// Modal Edit State
+let currentEditReservationId = null;
+let editSelectedCheckIn = null;
+let editSelectedCheckOut = null;
+let editVillaId = null;
+let editCurrentMonth = new Date();
+
 // ============================================
 // AUTHENTICATION
 // ============================================
@@ -336,6 +343,14 @@ function editReservation(id) {
 
     if (!reservation) return;
 
+    currentEditReservationId = reservation.firestoreId;
+    editVillaId = reservation.villaNumber || 'B-1';
+
+    // Configurar fechas para el calendario y inputs
+    editSelectedCheckIn = new Date(reservation.checkIn + 'T12:00:00');
+    editSelectedCheckOut = new Date(reservation.checkOut + 'T12:00:00');
+    editCurrentMonth = new Date(editSelectedCheckIn.getFullYear(), editSelectedCheckIn.getMonth(), 1);
+
     document.getElementById('editReservationId').value = reservation.firestoreId; // Use Firestore ID for updates
     document.getElementById('editGuestName').value = reservation.guestName;
     document.getElementById('editGuestEmail').value = reservation.guestEmail;
@@ -344,7 +359,12 @@ function editReservation(id) {
     document.getElementById('editNumGuests').value = reservation.numGuests;
     document.getElementById('editStatus').value = reservation.status || 'confirmed';
 
+    const editVillaLabel = document.getElementById('editVillaLabel');
+    if (editVillaLabel) editVillaLabel.textContent = editVillaId;
+
     document.getElementById('editModal').style.display = 'flex';
+
+    renderEditCalendar();
 }
 
 async function quickUpdateStatus(firestoreId, newStatus) {
@@ -410,6 +430,183 @@ function closeEditModal() {
         document.body.classList.remove('modal-open');
     }
 }
+
+// ============================================
+// EDIT CALENDAR VIEW FUNCTIONS
+// ============================================
+function changeEditMonth(delta) {
+    editCurrentMonth.setMonth(editCurrentMonth.getMonth() + delta);
+    renderEditCalendar();
+}
+
+function formatDateISO(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function getEditDayStatus(date) {
+    const dateStr = formatDateISO(date);
+
+    let hasCheckIn = false;
+    let hasCheckOut = false;
+    let isMiddleDay = false;
+
+    // Verificar reservas de Firestore
+    allReservations.forEach(reservation => {
+        if (reservation.firestoreId === currentEditReservationId) return;
+
+        const checkVilla = editVillaId;
+        const matchesVilla = reservation.villaNumber == checkVilla ||
+            (reservation.villaNumber == parseInt(checkVilla) && checkVilla.length === 1);
+        const isCancelled = reservation.status === 'cancelled';
+
+        if (matchesVilla && !isCancelled) {
+            if (dateStr === reservation.checkIn) hasCheckIn = true;
+            if (dateStr === reservation.checkOut) hasCheckOut = true;
+            if (dateStr > reservation.checkIn && dateStr < reservation.checkOut) isMiddleDay = true;
+        }
+    });
+
+    // Verificar fechas bloqueadas
+    const blockedDates = getBlockedDates();
+    blockedDates.forEach(block => {
+        const matchesVilla = !block.villaNumber || block.villaNumber == editVillaId;
+        if (matchesVilla && dateStr >= block.startDate && dateStr <= block.endDate) {
+            isMiddleDay = true;
+        }
+    });
+
+    if (isMiddleDay) return 'fully-reserved';
+    if (hasCheckIn && hasCheckOut) return 'fully-reserved';
+    if (hasCheckIn) return 'checkin-reserved';
+    if (hasCheckOut) return 'checkout-reserved';
+
+    return 'available';
+}
+
+function selectEditDate(date) {
+    const dateStr = date.toDateString();
+    const status = getEditDayStatus(date);
+
+    const checkInEl = document.getElementById('editCheckIn');
+    const checkOutEl = document.getElementById('editCheckOut');
+
+    if (editSelectedCheckIn && dateStr === editSelectedCheckIn.toDateString()) {
+        editSelectedCheckIn = editSelectedCheckOut;
+        editSelectedCheckOut = null;
+        checkInEl.value = editSelectedCheckIn ? formatDateISO(editSelectedCheckIn) : '';
+        checkOutEl.value = '';
+    } else if (editSelectedCheckOut && dateStr === editSelectedCheckOut.toDateString()) {
+        editSelectedCheckOut = null;
+        checkOutEl.value = '';
+    } else if (!editSelectedCheckIn || (editSelectedCheckIn && editSelectedCheckOut) || (date < editSelectedCheckIn)) {
+        if (status === 'checkin-reserved') {
+            alert('El check-in no está disponible para este día.');
+            return;
+        }
+        editSelectedCheckIn = date;
+        editSelectedCheckOut = null;
+        checkInEl.value = formatDateISO(date);
+        checkOutEl.value = '';
+    } else if (date > editSelectedCheckIn) {
+        if (status === 'checkout-reserved') {
+            alert('El check-out no está disponible para este día.');
+            return;
+        }
+        if (!isEditRangeAvailable(editSelectedCheckIn, date)) {
+            alert('No se puede seleccionar este rango porque contiene fechas bloqueadas u ocupadas.');
+            return;
+        }
+        editSelectedCheckOut = date;
+        checkOutEl.value = formatDateISO(date);
+    }
+    renderEditCalendar();
+}
+
+function isEditRangeAvailable(start, end) {
+    if (!start || !end) return true;
+    let tempDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+    while (tempDate <= endDate) {
+        const status = getEditDayStatus(tempDate);
+        const dateStr = formatDateISO(tempDate);
+        const startStr = formatDateISO(start);
+        const endStr = formatDateISO(endDate);
+
+        if (dateStr === startStr) {
+            if (status === 'fully-reserved' || status === 'checkin-reserved') return false;
+        } else if (dateStr === endStr) {
+            if (status === 'fully-reserved' || status === 'checkout-reserved') return false;
+        } else {
+            if (status !== 'available') return false;
+        }
+        tempDate.setDate(tempDate.getDate() + 1);
+    }
+    return true;
+}
+
+function renderEditCalendar() {
+    const calendar = document.getElementById('editCalendar');
+    const monthYear = document.getElementById('editMonthYear');
+    if (!calendar || !monthYear) return;
+
+    const firstDay = new Date(editCurrentMonth.getFullYear(), editCurrentMonth.getMonth(), 1);
+    const lastDay = new Date(editCurrentMonth.getFullYear(), editCurrentMonth.getMonth() + 1, 0);
+
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    monthYear.textContent = `${monthNames[editCurrentMonth.getMonth()]} ${editCurrentMonth.getFullYear()}`;
+
+    calendar.innerHTML = '';
+
+    ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day-header';
+        dayHeader.textContent = day;
+        calendar.appendChild(dayHeader);
+    });
+
+    for (let i = 0; i < firstDay.getDay(); i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendar.appendChild(emptyDay);
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dayDate = new Date(editCurrentMonth.getFullYear(), editCurrentMonth.getMonth(), day);
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+
+        const status = getEditDayStatus(dayDate);
+
+        if (dayDate < today) {
+            dayElement.classList.add('past');
+        } else if (status === 'fully-reserved') {
+            dayElement.classList.add('reserved');
+        } else {
+            dayElement.classList.add(status);
+
+            const dateStr = dayDate.toDateString();
+            const inSelected = editSelectedCheckIn && dateStr === editSelectedCheckIn.toDateString();
+            const outSelected = editSelectedCheckOut && dateStr === editSelectedCheckOut.toDateString();
+            const inRange = editSelectedCheckIn && editSelectedCheckOut && dayDate > editSelectedCheckIn && dayDate < editSelectedCheckOut;
+
+            if (inSelected || outSelected) dayElement.classList.add('selected');
+            if (inRange) dayElement.classList.add('in-range');
+
+            dayElement.addEventListener('click', () => selectEditDate(dayDate));
+        }
+
+        calendar.appendChild(dayElement);
+    }
+}
+
 
 // ============================================
 // CALENDAR BLOCKING
@@ -569,7 +766,7 @@ function renderCalendar() {
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">🚫 Bloqueado</div>`;
         } else if (occupancyInfo && occupancyInfo.guests.length > 0) {
             dayCell.classList.add('occupied');
-            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name} (V${g.villa})</div>`).join('');
+            const guestList = occupancyInfo.guests.map(g => `<div class="guest-name" title="Villa #${g.villa}">${g.name} (V${g.villa})${g.type}</div>`).join('');
             dayCell.innerHTML = `<div class="day-number">${day}</div><div class="day-info">${guestList}</div>`;
         } else {
             dayCell.classList.add('available');
@@ -583,13 +780,22 @@ function getOccupiedDates() {
     allReservations.forEach(reservation => {
         const checkIn = new Date(reservation.checkIn);
         const checkOut = new Date(reservation.checkOut);
+
+        // Ensure accurate string matching without timezone offset issues
+        const checkInStr = reservation.checkIn;
+        const checkOutStr = reservation.checkOut;
+
         const villaNum = reservation.villaNumber || 'N/A';
-        for (let d = new Date(checkIn); d < checkOut; d.setDate(d.getDate() + 1)) {
+        for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
             const dateStr = d.toISOString().split('T')[0];
             if (!occupiedMap[dateStr]) {
                 occupiedMap[dateStr] = { date: dateStr, guests: [] };
             }
-            occupiedMap[dateStr].guests.push({ name: reservation.guestName, villa: villaNum });
+            let type = '';
+            if (dateStr === checkInStr) type = ' (Entrada)';
+            else if (dateStr === checkOutStr) type = ' (Salida)';
+
+            occupiedMap[dateStr].guests.push({ name: reservation.guestName, villa: villaNum, type: type });
         }
     });
     return Object.values(occupiedMap);
@@ -612,5 +818,6 @@ window.quickUpdateStatus = quickUpdateStatus;
 window.closeEditModal = closeEditModal;
 window.logout = logout;
 window.changeMonth = changeMonth;
+window.changeEditMonth = changeEditMonth;
 window.loadDashboardData = loadDashboardData;
 window.loadReservationsTable = loadReservationsTable;

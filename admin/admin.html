@@ -241,11 +241,39 @@
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <label class="form-label">Check-in</label>
-                                <input type="date" class="form-control" id="editCheckIn" required>
+                                <input type="date" class="form-control bg-light" id="editCheckIn" required readonly
+                                    style="pointer-events: none;">
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Check-out</label>
-                                <input type="date" class="form-control" id="editCheckOut" required>
+                                <input type="date" class="form-control bg-light" id="editCheckOut" required readonly
+                                    style="pointer-events: none;">
+                            </div>
+                        </div>
+
+                        <!-- CALENDARIO INTERACTIVO PARA EDICION -->
+                        <div class="mb-3 bg-white p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0 fw-bold">Disponibilidad de Villa <span id="editVillaLabel"></span></h6>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                        onclick="window.changeEditMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                        onclick="window.changeEditMonth(1)"><i class="bi bi-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <h6 class="text-center fw-bold small mb-2" id="editMonthYear"></h6>
+                            <div id="editCalendar" class="calendar-grid-bootstrap mb-2"></div>
+                            <div class="d-flex justify-content-center gap-3 small text-muted">
+                                <div><span
+                                        style="display:inline-block; width:12px; height:12px; background:white; border:1px solid #ddd;"></span>
+                                    Libre</div>
+                                <div><span
+                                        style="display:inline-block; width:12px; height:12px; background:var(--cyan-vibrant);"></span>
+                                    Seleccionado</div>
+                                <div><span
+                                        style="display:inline-block; width:12px; height:12px; background:#fff3cd;"></span>
+                                    Ocupada</div>
                             </div>
                         </div>
                         <div class="mb-3">
